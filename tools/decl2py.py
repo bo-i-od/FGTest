@@ -243,7 +243,7 @@ def json_list_to_blocks(json_object_list, name):
         blocks += "\n\n"
     return blocks
 
-def update_h(output_dir="../activities/decl"):
+def update_h(output_dir="../table_configuration/decl"):
     # 生成excel表解析
     base_data_path = Path(DEV_EXCEL_PATH.split("策划模板导出工具/")[0] + r"ElementData/BaseData/")
     direct_files = list(base_data_path.glob("*"))  # 包含文件和目录
