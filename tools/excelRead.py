@@ -196,7 +196,6 @@ class ExcelTools:
         return column_data
 
 
-from activities.decl.TIMER_MAIN import TIMER_MAIN, TimeStruct
 
 
 class ExcelToolsForActivities(ExcelTools):
@@ -394,27 +393,6 @@ class ExcelToolsForActivities(ExcelTools):
             instance_object_list.append(instance_object)
             cur += 1
         return json_object_list, instance_object_list
-
-
-    def timer_main(self, timer_id:int, time_start: str, time_end: str =None, time_duration=None, timer_main_detail=None):
-        """
-            更改指定timer_id的openTime和endTime
-        """
-        if timer_main_detail is None:
-            timer_main_detail = self.get_table_data_detail(book_name="TIMER_MAIN.xlsm")
-        instance_object: TIMER_MAIN
-        json_object, instance_object = self.get_object(key="timerID", value=timer_id, table_data_detail=timer_main_detail, cls=TIMER_MAIN)
-        instance_object.openTime = time_start
-        if time_end:
-            instance_object.endTime = time_end
-            instance_object.durationTime = TimeStruct()
-        if time_duration:
-            instance_object.durationTime = TimeStruct()
-            instance_object.durationTime.day = time_duration
-            instance_object.endTime = None
-        print(instance_object)
-        self.change_object(key="timerID", value=timer_id, instance_object=instance_object, table_data_detail=timer_main_detail)
-
 
     def group_id_to_timer_id(self, group_id):
         """

@@ -62,16 +62,15 @@ class BasePageMain:
             self.is_ios = True
 
         # 默认端口 5001
-        addr = ('', 5001)
+        addr = ('127.0.0.1', 5001)
         # Unity log接收端口5002
-        addr_listen = ('', 5002)
+        addr_listen = ('127.0.0.1', 5002)
         self.dev = dev
         if self.dev is None:
             print("self.dev is None")
             self.serial_number = serial_number
             self.dev = self.get_device(serial_number=serial_number)
-
-        self.poco = UnityPoco(addr, device=dev)
+        self.poco = UnityPoco(addr, device=self.dev)
         self.custom_cmd("setCamera UICamera_Front")
         self.poco_listen = None
 
@@ -1985,7 +1984,7 @@ end
 
 if __name__ == '__main__':
     bp = BasePage(is_mobile_device=False, serial_number="127.0.0.1:21503")
-    bp.cmd("mode 400301 390001")
+    # bp.cmd("mode 400301 390001")
     # bp.is_time_scale=True
     # bp.set_time_scale(5)
     # bp.lua_console("DebugLog=true")
