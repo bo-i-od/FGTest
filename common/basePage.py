@@ -1609,7 +1609,7 @@ class BasePageMain:
             break
         return target_log
 
-    def receive_until_get_msg(self, msg_name, time_interval=0.05, timeout=5, key_sc='<==== [Lua] Receive Net Msg "SC'):
+    def receive_until_get_msg(self, time_interval=0.05, timeout=5, msg_key=''):
         """函数功能简述
             循环接收消息直到找到目标消息
 
@@ -1625,7 +1625,6 @@ class BasePageMain:
             cur += time_interval
             self.sleep(time_interval)
             # 在最近收集的消息列表中筛出目标消息
-            msg_key = key_sc + msg_name
             target_log = self.get_target_log(msg_key)
             if target_log == "":
                 continue
@@ -1973,12 +1972,15 @@ end
         # 发送消息
         self.lua_console(lua_code)
 
-        target_log = self.receive_until_get_msg(msg_name="", key_sc=title)
+        target_log = self.receive_until_get_msg(msg_key=title)
 
         if not target_log:
             return None
 
         return target_log.split(title)[1].strip()
+
+    def dice(self, times: int, bet: int = 1):
+        rpcMethodRequest.dice(self.poco, times=times, bet=bet)
 
 
 
@@ -1997,7 +1999,6 @@ if __name__ == '__main__':
     # str(t)
     # bp.cmd_list(["levelupto 69", "guideskip"])
     # bp.sleep(1)
-
     # bp.go_to_panel("TournamentsPanel")
     # bp.go_home()
     # bp.clear_popup()

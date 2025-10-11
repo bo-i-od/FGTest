@@ -107,3 +107,7 @@ def set_time_scale(poco:Poco, time_scale:float)-> any:
 
 def set_send_log_flag(poco:Poco, send_log_flag:bool)-> any:
     ...
+
+def dice(poco:Poco, times: int, bet: int)-> any:
+    ...
+

@@ -186,5 +186,9 @@ def set_time_scale(poco, time_scale):
 def set_send_log_flag(poco, send_log_flag):
     return poco.agent.c.call("SetSendLogFlag", send_log_flag)
 
+@sync_wrapper
+def dice(poco, times, bet):
+    return poco.agent.c.call("Dice", times, bet)
+
 
 
