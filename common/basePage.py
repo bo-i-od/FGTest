@@ -985,7 +985,7 @@ class BasePageMain:
             self.click_position(position)
             return position
 
-        self.clear_popup(ignore_set)
+        # self.clear_popup(ignore_set)
         position_list = self.get_position_list(element_data=element_data, offspring_path=offspring_path)
         self.is_single_element(position_list)
         self.click_position_base(position_list[0])
@@ -1981,6 +1981,35 @@ end
 
     def dice(self, times: int, bet: int = 1):
         rpcMethodRequest.dice(self.poco, times=times, bet=bet)
+
+
+    def convert_numeric_string(self, object_id: int = 0, element_data: dict = None, offspring_path=""):
+        num = self.get_text(object_id=object_id,element_data=element_data,offspring_path=offspring_path)
+        # 移除逗号并转换为小写
+        num = num.replace(',','').strip().lower()
+        multiplier = 1
+        if num.endswith('k'):
+            multiplier = 1000
+            num = num[:-1]  # 移除后缀
+        elif num.endswith('m'):
+            multiplier = 1000000
+            num = num[:-1]  # 移除后缀
+        elif num.endswith('b'):
+            multiplier = 1000000000
+            num = num[:-1]  # 移除后缀
+        elif num.endswith('t'):
+            multiplier = 1000000000000
+            num = num[:-1]  # 移除后缀
+
+        # 转换数字部分
+        try:
+            num = float(num)
+        except ValueError:
+            raise ValueError(f"Invalid numeric string: '{num}'")
+
+        # 应用乘数
+        result = num * multiplier
+        return result
 
 
 
