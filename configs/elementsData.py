@@ -40,5 +40,58 @@ class ElementsData:
         money_value = {"locator": "UICanvas>Default>ResourcesBarPanel>panel>res_01>value"}
         player_exp_value = {"locator": "UICanvas>Default>ResourcesBarPanel>panel>player_exp>value"}
         btn_menu = {"locator": "UICanvas>Default>ResourcesBarPanel>panel>btn_menu>btn_normal"}
-        shield = {"locator": "UICanvas>Default>ResourcesBarPanel>panel>panel_shield>icon(Clone)"}
+        shield_total = {"locator": "UICanvas>Default>ResourcesBarPanel>panel>panel_shield>icon(Clone)"}
+        shield = {"locator": "UICanvas>Default>ResourcesBarPanel>panel>panel_shield>icon(Clone)>icon"}
+
+    class BuildingPanel:
+        BuildingPanel = {"locator": "UICanvas>Default>BuildingPanel"}
+        building_1 = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_1>icon"}
+        building_2 = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_2>icon"}
+        building_3 = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_3>icon"}
+        building_4 = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_4>icon"}
+        building_5 = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_5>icon"}
+        cost1_value = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_1>cost>value"}
+        cost2_value = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_2>cost>value"}
+        cost3_value = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_3>cost>value"}
+        cost4_value = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_4>cost>value"}
+        cost5_value = {"locator": "UICanvas>Default>BuildingPanel>panel>building_list>building_5>cost>value"}
+        progress_value = {"locator": "UICanvas>Default>BuildingPanel>panel>panel_bottom>value"}
+        btn_close = {"locator": "UICanvas>Default>BuildingPanel>panel>panel_bottom>btn_close"}
+
+    class BuildingCompletePanel:
+        BuildingCompletePanel = {"locator": "UICanvas>Default>BuildingCompletePanel"}
+        btn_go = {"locator": "UICanvas>Default>BuildingCompletePanel>panel>down>btn_go>btn_normal"}
+
+    class StarGalleryPanel:
+        StarGalleryPanel = {"locator": "UICanvas>Default>StarGalleryPanel"}
+        btn_close = {"locator": "UICanvas>Default>StarGalleryPanel>panel>panel_bottom>btn_close>icon"}
+
+    class BuildingDestroyPanel:
+        BuildingDestroyPanel = {"locator": "UICanvas>Default>BuildingDestroyPanel"}
+
+        class Choose:
+            btn_confirm = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>panel_bottom>btn_confirm>btn_normal"}
+            opponent_head_mask = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>opponent_Info>head>head_mask>head_img"}
+            opponent_name = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>opponent_Info>name"}
+            multiple = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>opponent_Info>multiple>multiples_modle>text"}
+            crosshair = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>Crosshair>model(Clone)>crosshair"}
+
+        class Change:
+            panel_change = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change"}
+            btn_close = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_bottom>btn_close>icon"}
+            btn_revenge = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_list>tab>1>text"}
+            btn_friend = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_list>tab>2>text"}
+            btn_go = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_list>list>Viewport>Content>1>list_item_model>panel_revenge>btn_go>btn_normal"}
+
+        class Reward:
+            panel_reward = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward"}
+            money_value = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward>reward>money>value"}
+            opponent_head_mask = {
+                "locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward>opponent_Info>head>head_mask>head_img"}
+            opponent_name = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward>opponent_Info>name"}
+            btn_confirm = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward>panel_bottom>btn_confirm>btn_normal"}
+
+
+
+
 
