@@ -1723,6 +1723,8 @@ class BasePage(BasePageMain):
         super().__init__(serial_number, dev, is_mobile_device, is_monitor, excel_path)
 
         self.is_monitor = is_monitor
+        # 快速上鱼
+        self.is_reel_quick = False
 
         # 配置表的路径
         if excel_path is None:
@@ -1981,6 +1983,14 @@ end
 
     def dice(self, times: int, bet: int = 1):
         rpcMethodRequest.dice(self.poco, times=times, bet=bet)
+
+    def set_reel_quick(self, is_reel_quick: bool):
+        self.is_reel_quick = is_reel_quick
+        if self.is_reel_quick:
+            self.custom_cmd(f"setReelQuick 1")
+            return
+        self.custom_cmd(f"setReelQuick 0")
+
 
 
     def convert_numeric_string(self, object_id: int = 0, element_data: dict = None, offspring_path=""):
