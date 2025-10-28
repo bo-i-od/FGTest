@@ -52,7 +52,7 @@ class HomePanel(BasePage):
         return right_name
 
     def get_money_value(self):
-        money_value = self.get_text(element_data=ElementsData.HomePanel.money_value)
+        money_value = self.convert_numeric_string(element_data=ElementsData.HomePanel.money_value)
         return money_value
 
     def get_right_multiple_value(self):
