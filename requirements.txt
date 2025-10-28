@@ -7,5 +7,4 @@ opencv_contrib_python==4.6.0.66
 openpyxl==3.1.5
 pocoui==1.0.94
 pywin32==311
-slpp==1.2.3
-tqdm==4.67.1
+SLPP==1.2.3

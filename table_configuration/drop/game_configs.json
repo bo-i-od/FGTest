@@ -1,0 +1,561 @@
+{
+  "component_types": {
+    "0": "下落口",
+    "1": "得分口",
+    "2": "钉",
+    "3": "缓冲器",
+    "4": "多边形障碍",
+    "5": "墙"
+  },
+  "level": [
+    {
+      "position": [
+        120,
+        0
+      ],
+      "component": 0,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        310,
+        0
+      ],
+      "component": 0,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        500,
+        0
+      ],
+      "component": 0,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        690,
+        0
+      ],
+      "component": 0,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        880,
+        0
+      ],
+      "component": 0,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        65,
+        1050
+      ],
+      "component": 1,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        210,
+        1050
+      ],
+      "component": 1,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        355,
+        1050
+      ],
+      "component": 1,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        500,
+        1050
+      ],
+      "component": 1,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        645,
+        1050
+      ],
+      "component": 1,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        790,
+        1050
+      ],
+      "component": 1,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        935,
+        1050
+      ],
+      "component": 1,
+      "vertex": [
+        [
+          -65,
+          0
+        ],
+        [
+          65,
+          0
+        ]
+      ]
+    },
+    {
+      "position": [
+        0,
+        500
+      ],
+      "component": 5,
+      "vertex": [
+        [
+          0,
+          -550
+        ],
+        [
+          0,
+          550
+        ]
+      ]
+    },
+    {
+      "position": [
+        1000,
+        500
+      ],
+      "component": 5,
+      "vertex": [
+        [
+          0,
+          -550
+        ],
+        [
+          0,
+          550
+        ]
+      ]
+    },
+    {
+      "position": [
+        500,
+        250
+      ],
+      "component": 4,
+      "vertex": [
+        [
+          -70,
+          0
+        ],
+        [
+          0,
+          -35
+        ],
+        [
+          70,
+          0
+        ],
+        [
+          0,
+          35
+        ]
+      ]
+    },
+    {
+      "position": [
+        115,
+        230
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        885,
+        230
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        310,
+        330
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        690,
+        330
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        0,
+        380
+      ],
+      "component": 4,
+      "vertex": [
+        [
+          0,
+          -50
+        ],
+        [
+          50,
+          0
+        ],
+        [
+          0,
+          50
+        ]
+      ]
+    },
+    {
+      "position": [
+        1000,
+        380
+      ],
+      "component": 4,
+      "vertex": [
+        [
+          0,
+          -50
+        ],
+        [
+          -50,
+          0
+        ],
+        [
+          0,
+          50
+        ]
+      ]
+    },
+    {
+      "position": [
+        500,
+        630
+      ],
+      "component": 3,
+      "radius": 80
+    },
+    {
+      "position": [
+        500,
+        455
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        230,
+        500
+      ],
+      "component": 4,
+      "vertex": [
+        [
+          39.6,
+          -39.6
+        ],
+        [
+          -19.8,
+          -19.8
+        ],
+        [
+          -39.6,
+          39.6
+        ],
+        [
+          19.8,
+          19.8
+        ]
+      ]
+    },
+    {
+      "position": [
+        770,
+        500
+      ],
+      "component": 4,
+      "vertex": [
+        [
+          39.6,
+          39.6
+        ],
+        [
+          19.8,
+          -19.8
+        ],
+        [
+          -39.6,
+          -39.6
+        ],
+        [
+          -19.8,
+          19.8
+        ]
+      ]
+    },
+    {
+      "position": [
+        330,
+        580
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        670,
+        580
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        80,
+        550
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        920,
+        550
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        0,
+        760
+      ],
+      "component": 4,
+      "vertex": [
+        [
+          0,
+          -60
+        ],
+        [
+          60,
+          0
+        ],
+        [
+          0,
+          60
+        ]
+      ]
+    },
+    {
+      "position": [
+        1000,
+        760
+      ],
+      "component": 4,
+      "vertex": [
+        [
+          0,
+          -60
+        ],
+        [
+          -60,
+          0
+        ],
+        [
+          0,
+          60
+        ]
+      ]
+    },
+    {
+      "position": [
+        370,
+        770
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        630,
+        770
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        500,
+        860
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        135,
+        930
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        270,
+        900
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        420,
+        930
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        580,
+        930
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        730,
+        900
+      ],
+      "component": 2,
+      "radius": 15
+    },
+    {
+      "position": [
+        865,
+        930
+      ],
+      "component": 2,
+      "radius": 15
+    }
+  ]
+}

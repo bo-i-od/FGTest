@@ -62,6 +62,8 @@ def generate_card_deal_common(keys, goodness=50, blank_weight_in_pool_factor: fl
 
     # 遍历指定的卡牌键，创建卡牌权重对象
     for key in keys:
+        if weight[key]["weightInPool"] <= 0:
+            continue
         card_weight = FORTUNE_FLIP_CARD_WEIGHT()
         card_weight.fortuneFlipCardId = weight[key]["cardId"]
         card_weight.weightInPool = weight[key]["weightInPool"]
@@ -80,7 +82,7 @@ def generate_card_deal_common(keys, goodness=50, blank_weight_in_pool_factor: fl
     return card_weight_list
 
 
-def generate_weight_common_all(goodness=50):
+def generate_weight_common_all(goodness=50, bad_factor=0.5):
     """
     根据好坏程度生成卡牌权重配置
 
@@ -92,6 +94,7 @@ def generate_weight_common_all(goodness=50):
     Returns:
         weight: 包含所有卡牌权重信息的字典
     """
+
     weight = copy.deepcopy(cfg)
 
     # 限制goodness在有效范围内
@@ -99,6 +102,7 @@ def generate_weight_common_all(goodness=50):
         goodness = 0
     if goodness > 100:
         goodness = 100
+
 
     # goodness ≤ 50时的权重配置（较不利）
     if goodness <= 50:
@@ -110,20 +114,20 @@ def generate_weight_common_all(goodness=50):
         weight["add_150"]["weightFlip"] = 1050
 
         # 减分卡权重配置：goodness越低，减分卡权重越高
-        weight["subtract_30"]["weightInPool"] = 3000 - goodness*50
+        weight["subtract_30"]["weightInPool"] = int((3000 - goodness*50)*bad_factor)
         weight["subtract_30"]["weightFlip"] = 900
-        weight["subtract_20"]["weightInPool"] = 2000 - goodness*10
+        weight["subtract_20"]["weightInPool"] = int((2000 - goodness*10)*bad_factor)
         weight["subtract_20"]["weightFlip"] = 850
-        weight["subtract_15"]["weightInPool"] = 1000 + goodness*10
+        weight["subtract_15"]["weightInPool"] = int((1000 + goodness*10)*bad_factor)
         weight["subtract_15"]["weightFlip"] = 800
-        weight["subtract_10"]["weightInPool"] = goodness*10
+        weight["subtract_10"]["weightInPool"] = int(goodness*10*bad_factor)
         weight["subtract_10"]["weightFlip"] = 750
 
         # 乘除法卡权重配置
-        weight["multiply_2"]["weightInPool"] = goodness*10
+        weight["multiply_2"]["weightInPool"] = goodness*5
         weight["multiply_3"]["weightInPool"] = goodness
         weight["multiply_3"]["weightFlip"] = 1500
-        weight["divide_2"]["weightInPool"] = 3000 - goodness*50
+        weight["divide_2"]["weightInPool"] = int((750 - goodness*5)*bad_factor)
         weight["divide_2"]["weightFlip"] = 750
 
         # 回合卡权重配置
@@ -142,20 +146,20 @@ def generate_weight_common_all(goodness=50):
         weight["add_150"]["weightFlip"] = 1050
 
         # 调整减分卡权重：降低减分卡出现概率
-        weight["subtract_30"]["weightInPool"] = 1000 - goodness*10
+        weight["subtract_30"]["weightInPool"] = int((1000 - goodness*10)*bad_factor)
         weight["subtract_30"]["weightFlip"] = 900
-        weight["subtract_20"]["weightInPool"] = 2000 - goodness*10
+        weight["subtract_20"]["weightInPool"] = int((2000 - goodness*10)*bad_factor)
         weight["subtract_20"]["weightFlip"] = 850
-        weight["subtract_15"]["weightInPool"] = 1000 + goodness*10
+        weight["subtract_15"]["weightInPool"] = int((1000 + goodness*10)*bad_factor)
         weight["subtract_15"]["weightFlip"] = 800
-        weight["subtract_10"]["weightInPool"] = -2000 + goodness*50
+        weight["subtract_10"]["weightInPool"] = int((-2000 + goodness*50)*bad_factor)
         weight["subtract_10"]["weightFlip"] = 750
 
         # 乘除法卡权重调整
-        weight["multiply_2"]["weightInPool"] = goodness*10
+        weight["multiply_2"]["weightInPool"] = goodness*5
         weight["multiply_3"]["weightInPool"] = goodness
         weight["multiply_3"]["weightFlip"] = 1500
-        weight["divide_2"]["weightInPool"] = 1000 - goodness*10
+        weight["divide_2"]["weightInPool"] = int((750 - goodness*5)*bad_factor)
         weight["divide_2"]["weightFlip"] = 750
 
         # 回合卡权重调整
@@ -185,6 +189,8 @@ def generate_card_deal_special(keys, blank_weight_in_pool_factor: float = 0):
 
     # 创建特殊卡牌权重对象
     for key in keys:
+        if weight[key]["weightInPool"] <= 0:
+            continue
         card_weight = FORTUNE_FLIP_CARD_WEIGHT()
         card_weight.fortuneFlipCardId = weight[key]["cardId"]
         card_weight.weightInPool = weight[key]["weightInPool"]  # 使用默认权重
@@ -281,8 +287,7 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第二个位置：减分卡（中等好坏程度）
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
-            "multiply_2", "divide_2"]
+    keys = ["add_5", "add_25", "add_50", "subtract_10", "subtract_15", "subtract_20"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -292,8 +297,10 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -301,8 +308,9 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -328,7 +336,7 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第二个位置：减分卡（中等好坏程度）
-    keys = ["subtract_10", "subtract_15", "subtract_20", "subtract_30", "divide_2"]
+    keys = ["add_5", "add_25", "add_50", "subtract_10", "subtract_15", "subtract_20"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -341,7 +349,7 @@ def generate_fortune_flip_round_9(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -349,8 +357,9 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -389,7 +398,7 @@ def generate_fortune_flip_round_9(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -397,8 +406,9 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -416,7 +426,7 @@ def generate_fortune_flip_round_9(event_id):
     # 第一个位置：加分卡（中等好坏程度）
     keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -427,7 +437,7 @@ def generate_fortune_flip_round_9(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=75)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -435,8 +445,10 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第三个位置：较差配置
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -444,8 +456,9 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -474,7 +487,7 @@ def generate_fortune_flip_round_9(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=100)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -482,8 +495,10 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -491,6 +506,7 @@ def generate_fortune_flip_round_9(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -519,9 +535,10 @@ def generate_fortune_flip_round_8(event_id):
     deal_group = DEAL_GROUP(dealId=[])
 
     # 所有位置都是加分卡，但使用最差的好坏程度（goodness=0）
-    keys = ["add_5", "add_25", "add_50", "add_150"]
+
 
     # 前两个位置：纯加分卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -529,9 +546,10 @@ def generate_fortune_flip_round_8(event_id):
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
     fortune_flip_deal_list.append(fortune_flip_deal)
     index += 1
-    
+
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -539,6 +557,7 @@ def generate_fortune_flip_round_8(event_id):
     index += 1
 
     # 后两个位置：加分卡 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -548,7 +567,8 @@ def generate_fortune_flip_round_8(event_id):
     index += 1
     
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0, blank_weight_in_pool_factor=1)
+    keys = ["add_5", "add_25", "add_50", "add_150"]
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -572,9 +592,10 @@ def generate_fortune_flip_round_7(event_id):
 
     index = 0    
     deal_group = DEAL_GROUP(dealId=[])
-    keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
+
 
     # 第一个位置：加分卡和乘法卡（较差配置）
+    keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -595,16 +616,20 @@ def generate_fortune_flip_round_7(event_id):
     index += 1
 
     # 后两个位置增加空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "multiply_3", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
     fortune_flip_deal_list.append(fortune_flip_deal)
     index += 1
-    
+
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "multiply_3", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=60, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -682,13 +707,14 @@ def generate_fortune_flip_round_5(event_id):
     fortune_flip_round = FORTUNE_FLIP_ROUND(roundType=0, roundId=5, dealGroup=[])
 
     index = 0
+
     # 默认发牌
     deal_group = DEAL_GROUP(dealId=[])
 
     # 第一个位置：加分卡（中等好坏程度）
     keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -696,8 +722,7 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第二个位置：减分卡（中等好坏程度）
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
-            "multiply_2", "divide_2"]
+    keys = ["add_5", "add_25", "add_50", "subtract_10", "subtract_15", "subtract_20"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -707,8 +732,10 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -716,8 +743,9 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -743,7 +771,7 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第二个位置：减分卡（中等好坏程度）
-    keys = ["subtract_10", "subtract_15", "subtract_20", "subtract_30", "divide_2"]
+    keys = ["add_5", "add_25", "add_50", "subtract_10", "subtract_15", "subtract_20"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -756,7 +784,7 @@ def generate_fortune_flip_round_5(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -764,8 +792,9 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -804,7 +833,7 @@ def generate_fortune_flip_round_5(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -812,8 +841,9 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -831,7 +861,7 @@ def generate_fortune_flip_round_5(event_id):
     # 第一个位置：加分卡（中等好坏程度）
     keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -842,7 +872,7 @@ def generate_fortune_flip_round_5(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=75)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -850,8 +880,10 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第三个位置：较差配置
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -859,8 +891,9 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -889,7 +922,7 @@ def generate_fortune_flip_round_5(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=100)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -897,8 +930,10 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -906,6 +941,7 @@ def generate_fortune_flip_round_5(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -936,7 +972,7 @@ def generate_fortune_flip_round_4(event_id):
     # 第一个位置：纯加分卡
     keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=35)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -947,7 +983,7 @@ def generate_fortune_flip_round_4(event_id):
     keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "multiply_3", "divide_2", "turn_2", "turn_3"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=60)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -955,6 +991,8 @@ def generate_fortune_flip_round_4(event_id):
     index += 1
 
     # 第三个位置：全卡牌（中等配置）+ 空白卡
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "multiply_3", "divide_2", "turn_2", "turn_3"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -964,7 +1002,9 @@ def generate_fortune_flip_round_4(event_id):
     index += 1
     
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=75, blank_weight_in_pool_factor=1)
+    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "multiply_3", "divide_2", "turn_2", "turn_3"]
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=70, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1042,13 +1082,14 @@ def generate_fortune_flip_round_2(event_id):
     fortune_flip_round = FORTUNE_FLIP_ROUND(roundType=0, roundId=2, dealGroup=[])
 
     index = 0
+
     # 默认发牌
     deal_group = DEAL_GROUP(dealId=[])
 
     # 第一个位置：加分卡（中等好坏程度）
-    keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
+    keys = ["add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1056,10 +1097,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第二个位置：减分卡（中等好坏程度）
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
-            "multiply_2", "divide_2"]
+    keys = [ "add_25", "add_50", "subtract_15", "subtract_20"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1067,8 +1107,10 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
+    keys = [ "add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1076,8 +1118,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1095,7 +1138,7 @@ def generate_fortune_flip_round_2(event_id):
     # 第一个位置：加分卡（中等好坏程度）
     keys = ["add_50", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1103,9 +1146,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第二个位置：减分卡（中等好坏程度）
-    keys = ["subtract_10", "subtract_15", "subtract_20", "subtract_30", "divide_2"]
+    keys = [ "add_25", "add_50", "subtract_15", "subtract_20"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1113,10 +1156,10 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1124,8 +1167,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1141,9 +1185,9 @@ def generate_fortune_flip_round_2(event_id):
     deal_group = DEAL_GROUP(dealId=[], specialCardId=111)
 
     # 第一个位置：减分卡（中等好坏程度）
-    keys = ["subtract_10", "subtract_15", "subtract_20", "subtract_30", "divide_2"]
+    keys = ["subtract_15", "subtract_20", "subtract_30", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1151,9 +1195,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第二个位置：加分卡（中等好坏程度）
-    keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
+    keys = [ "add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1161,10 +1205,10 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+    keys = [ "add_25", "add_50", "add_150",  "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1172,8 +1216,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1189,9 +1234,9 @@ def generate_fortune_flip_round_2(event_id):
     deal_group = DEAL_GROUP(dealId=[], specialCardId=71)
 
     # 第一个位置：加分卡（中等好坏程度）
-    keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
+    keys = ["add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1199,10 +1244,10 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第二个位置：较好配置
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=75)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1210,8 +1255,10 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第三个位置：较差配置
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1219,8 +1266,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1236,9 +1284,9 @@ def generate_fortune_flip_round_2(event_id):
     deal_group = DEAL_GROUP(dealId=[], specialCardId=101)
 
     # 第一个位置：减分卡（中等好坏程度）
-    keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
+    keys = ["add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1246,10 +1294,10 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第二个位置：中等配置
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=100)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1257,8 +1305,10 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第三个位置：较差配置 + 空白卡
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=40)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1266,8 +1316,9 @@ def generate_fortune_flip_round_2(event_id):
     index += 1
 
     # 第四个位置：中等配置 + 空白卡
+    keys = ["add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=65, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id % 1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1294,9 +1345,9 @@ def generate_fortune_flip_round_1(event_id):
     deal_group = DEAL_GROUP(dealId=[])
 
     # 第一个位置：加分卡（最好配置）
-    keys = ["add_5", "add_25", "add_50", "add_150", "multiply_2"]
+    keys = ["add_25", "add_50", "add_150", "multiply_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=100)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1304,9 +1355,10 @@ def generate_fortune_flip_round_1(event_id):
     index += 1
 
     # 第二个位置：减分卡（最差配置）
-    keys = ["subtract_10", "subtract_15", "subtract_20", "subtract_30", "divide_2"]
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "multiply_3", "divide_2", "turn_2", "turn_3"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=30)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1314,10 +1366,10 @@ def generate_fortune_flip_round_1(event_id):
     index += 1
 
     # 第三、四个位置：全卡牌 + 空白卡
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
             "multiply_2", "multiply_3", "divide_2", "turn_2", "turn_3"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=60, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1325,7 +1377,9 @@ def generate_fortune_flip_round_1(event_id):
     index += 1
     
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=75, blank_weight_in_pool_factor=1)
+    keys = [ "add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "multiply_3", "divide_2", "turn_2", "turn_3"]
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=80, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1351,7 +1405,7 @@ def generate_fortune_flip_round_0(event_id):
     deal_group = DEAL_GROUP(dealId=[])
 
     # 第一个位置：黄金卡
-    keys = ["multiply_3", "turn_3", "add_150"]
+    keys = ["multiply_3", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
     fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
@@ -1361,10 +1415,9 @@ def generate_fortune_flip_round_0(event_id):
     index += 1
 
     # 第二个位置：全卡牌（最差配置）
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",
-            "multiply_2", "divide_2", "turn_2"]
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=0)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1372,8 +1425,9 @@ def generate_fortune_flip_round_0(event_id):
     index += 1
 
     # 第三、四个位置：全卡牌 + 空白卡
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30", "multiply_2", "divide_2"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=67, blank_weight_in_pool_factor=2)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1381,7 +1435,9 @@ def generate_fortune_flip_round_0(event_id):
     index += 1
     
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=100, blank_weight_in_pool_factor=2)
+    keys = ["add_25", "add_50", "add_150", "subtract_15", "subtract_20", "subtract_30",
+            "multiply_2", "divide_2"]
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=75, blank_weight_in_pool_factor=1)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"
@@ -1499,9 +1555,9 @@ def generate_fortune_flip_round_protect_7(event_id):
     index += 1
 
     # 第三四个位置：混合卡牌（中等配置）+ 空白卡
-    keys = ["add_5", "add_25", "add_50", "add_150", "subtract_10", "subtract_15", "subtract_20", "subtract_30",]
+    keys = ["add_5", "add_25", "add_50", "add_150"]
     fortune_flip_deal = FORTUNE_FLIP_DEAL()  # 创建新对象
-    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=50, blank_weight_in_pool_factor=1)
+    fortune_flip_deal.cardWeight = generate_card_deal_common(keys=keys, goodness=25)
     fortune_flip_deal.id = event_id%1000 * 10000 + fortune_flip_round.roundId * 100 + index
     deal_group.dealId.append(fortune_flip_deal.id)
     fortune_flip_deal.name = f"{event_id}卡组-剩余{fortune_flip_round.roundId}回合-第{index}个发牌池"

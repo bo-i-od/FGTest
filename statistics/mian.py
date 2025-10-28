@@ -1,3 +1,5 @@
+import math
+
 from common.basePage import BasePage
 from functools import wraps
 
@@ -19,10 +21,9 @@ def with_base_page(is_mobile_device=False, serial_number=None):
             finally:
                 # 直到接收到客户端打印的已执行完毕的结束标志，timeout最大保持连接时间单位s
                 bp.receive_until_get_msg(msg_key="已执行完毕", timeout=1000)
-                bp.sleep(1)
+                bp.sleep(10)
                 # 将CSValidateActionsMsg解析的简短一些
                 roll_action_parser.main()
-                bp.connect_close()
         return wrapper
     return decorator
 
@@ -38,7 +39,10 @@ def clear_log():
 def main(bp: BasePage):
     # 清空记录validate_actions_msg_log
     clear_log()
-    roll(bp, times=1, rate=1)
+
+    times = 100
+    roll(bp, times=times, rate=1)
+
 
 
 

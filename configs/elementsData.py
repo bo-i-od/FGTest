@@ -2,14 +2,25 @@ class ElementsData:
     Panels = {"locator": "UICanvas>>"}
     Panels_Default = {"locator": "UICanvas>Default>"}
 
-    class LoginPanel:
-        LoginPanel = {"locator": "UICanvas>Default>LoginPanel"}
-        btn_login = {"locator": "UICanvas>Default>LoginPanel>panel_internal>btn_login>text"}
-        Dropdown = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_ServerList"}
-        Dropdown_list = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_ServerList>Template>Viewport>Content"}
-        InputField_UserName = {"locator": "UICanvas>Default>LoginPanel>panel_internal>InputField_UserName"}
-        Dropdown_HistoryAccount = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_HistoryAccount"}
-        Dropdown_HistoryAccount_List = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_HistoryAccount>Template>Viewport>Content"}
+
+    class FishingPreparePanel:
+        FishingPreparePanel = {"locator": "UICanvas>Default>FishingPreparePanel"}
+        btn_cast = {"locator": "UICanvas>Default>FishingPreparePanel>panel>bottom>table>fishing reel>btn_cast"}
+
+    class FishingPanel:
+        FishingPanel = {"locator": "UICanvas>Default>FishingPanel"}
+
+    class FishingResultPanel:
+        FishingResultPanel = {"locator": "UICanvas>Default>FishingResultPanel"}
+        btn_confirm = {"locator": "UICanvas>Default>FishingResultPanel>panel>panel_bottom>btn_confirm"}
+        fish_name = {"locator":"UICanvas>Default>FishingResultPanel>panel>fish_name>text"}
+        digital = {"locator":"UICanvas>Default>FishingResultPanel>panel>reward>weight>digital>value"}
+        rank = {"locator":"UICanvas>Default>FishingResultPanel>panel>reward>weight>rank"}
+        money = {"locator":"UICanvas>Default>FishingResultPanel>panel>reward>money>value"}
+        fish_class = {"locator":"UICanvas>Default>FishingResultPanel>panel>fish_name>icon"}
+
+
+
 
     class HomePanel:
         HomePanel = {"locator": "UICanvas>Default>HomePanel"}
@@ -34,6 +45,19 @@ class ElementsData:
         progress_value_max = {"locator": "UICanvas>Default>HomePanel>panel>panel_progress_com>panel>progress>value>value_max"}
         reward_value = {"locator": "UICanvas>Default>HomePanel>panel>panel_progress_com>panel>progress>reward>value"}
         progress_time = {"locator": "UICanvas>Default>HomePanel>panel>panel_progress_com>panel>time>text"}
+
+    class LoginPanel:
+        LoginPanel = {"locator": "UICanvas>Default>LoginPanel"}
+        btn_login = {"locator": "UICanvas>Default>LoginPanel>panel_internal>btn_login>text"}
+        Dropdown = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_ServerList"}
+        Dropdown_list = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_ServerList>Template>Viewport>Content"}
+        InputField_UserName = {"locator": "UICanvas>Default>LoginPanel>panel_internal>InputField_UserName"}
+        Dropdown_HistoryAccount = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_HistoryAccount"}
+        Dropdown_HistoryAccount_List = {"locator": "UICanvas>Default>LoginPanel>panel_internal>Dropdown_HistoryAccount>Template>Viewport>Content"}
+
+    class MessageBoxPanel:
+        MessageBoxPanel = {"locator": "UICanvas>Default>MessageBoxPanel"}
+        btn_confirm = {"locator": "UICanvas>Important>MessageBoxPanel>panel>btn_confirm"}
 
     class ResourcesBarPanel:
         ResourcesBarPanel = {"locator": "UICanvas>Default>ResourcesBarPanel"}
@@ -94,4 +118,8 @@ class ElementsData:
 
 
 
+
+    class StickerCollectPopEventPanel:
+        StickerCollectPopEventPanel = {"locator": "UICanvas>Default>StickerCollectPopEventPanel"}
+        btn_close = {"locator": "UICanvas>Default>StickerCollectPopEventPanel>panel>btn_close>icon"}
 

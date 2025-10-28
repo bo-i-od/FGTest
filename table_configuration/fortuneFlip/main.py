@@ -8,7 +8,7 @@ from tools.excelRead import ExcelToolsForActivities
 
 
 
-def fortune_flip_event(excel_tool: ExcelToolsForActivities, event_id, round_list):
+def fortune_flip_event(excel_tool: ExcelToolsForActivities, event_id, round_list, minigameMultipleGroupId):
     """
     生成翻牌游戏事件配置并写入Excel
 
@@ -34,10 +34,11 @@ def fortune_flip_event(excel_tool: ExcelToolsForActivities, event_id, round_list
     instance_object = FORTUNE_FLIP_EVENT()
     instance_object.id = fortune_flip_event_id
     instance_object.name = f"翻牌配置{fortune_flip_event_id}"
-    instance_object.activityBaseCost = 30
-    instance_object.activityInitialBasePoints = 10
-    instance_object.minigameMultipleGroupId = 9999
+    instance_object.activityBaseCost = 50
+    instance_object.activityInitialBasePoints = 100
+    instance_object.minigameMultipleGroupId = minigameMultipleGroupId
     instance_object.minigameProgressRewardId = event_id // 10000 * 1000 + event_id % 1000
+    instance_object.roundIdStart = 8
 
 
     # 为每个回合生成配置
@@ -146,6 +147,12 @@ def deal_once_round(excel_tool:ExcelToolsForActivities, fortune_flip_deal_detail
     # 遍历回合中的每个卡牌位置
     while cur < len(deal_id_list):
         instance_object = deal_id_list[cur]
+        # i = 0
+        # while i < len(instance_object.cardWeight):
+        #     print(instance_object.cardWeight[i].weightInPool, instance_object.cardWeight[i].weightFlip)
+        #     if instance_object.cardWeight[i].weightInPool == 0 or instance_object.cardWeight[i].weightFlip == 0:
+        #         instance_object.cardWeight[i] = None
+        #     i += 1
 
         # # 生成唯一的卡牌池ID：事件ID * 1000 + 回合ID * 10 + 位置编号
         # instance_object.id = event_id * 10000 + round_id * 100 + cur
@@ -270,7 +277,8 @@ def main():
     excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)
 
     # 游戏配置参数
-    event_id = 300301                      # 事件ID，标识这是第2套配置
+    event_id = 300301                     # 事件ID，标识这是第2套配置
+    minigameMultipleGroupId = 3
 
 
     # 执行配置生成（可以选择性启用不同的模式）
@@ -280,9 +288,10 @@ def main():
 
     # # 生成标准模式的卡牌池配置
     round_list = fortune_flip_deal(excel_tool=excel_tool, event_id=event_id)
+    # print(round_list)
     #
     # # 生成游戏事件的主配置
-    fortune_flip_event(excel_tool=excel_tool, event_id=event_id, round_list=round_list)
+    fortune_flip_event(excel_tool=excel_tool, event_id=event_id, round_list=round_list, minigameMultipleGroupId=minigameMultipleGroupId)
 
     # 生成卡牌基础配置（已注释，可根据需要启用）
     # fortune_flip_card(excel_tool=excel_tool)

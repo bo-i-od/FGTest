@@ -213,7 +213,7 @@ def main():
         - 累计期望值用于后续回合的乘法/除法卡牌计算
     """
     # 配置参数
-    fortune_flip_event_id = 2  # 要分析的事件ID
+    fortune_flip_event_id = 300301  # 要分析的事件ID
 
     # 初始化Excel操作工具和数据访问
     excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)
@@ -230,14 +230,21 @@ def main():
     bb.expected_value_accumulated_list.append(10)  # 初始代币数量
     factor = 1  # 倍数因子
     cur = 0
-
     # 按回合逆序计算期望值（从最后一回合开始）
     while cur < len(instance_object.round):
         # 获取当前回合配置（逆序遍历）
         fortune_flip_round = instance_object.round[len(instance_object.round) - cur - 1]
+        if fortune_flip_round.dealGroup is None:
+            cur += 1
+            continue
+        deal_id_list = []
+        for deal_group in fortune_flip_round.dealGroup:
+            if deal_group.specialCardId is None or deal_group.specialCardId == 0:
+                deal_id_list = deal_group.dealId
+                break
 
         # 获取该回合的卡牌位置信息
-        positions = get_positions_of_deal(excel_tool=excel_tool, deal_id_list=fortune_flip_round.dealId, fortune_flip_deal_detail=fortune_flip_deal_detail)
+        positions = get_positions_of_deal(excel_tool=excel_tool, deal_id_list=deal_id_list, fortune_flip_deal_detail=fortune_flip_deal_detail)
 
         # 特殊回合处理逻辑
         if fortune_flip_round.roundType == 1:
@@ -277,8 +284,17 @@ def main():
         cur += 1
 
     # 输出分析结果
-    print("累计代币变化期望：", bb.expected_value_accumulated_list)
-    print("每回合代币收益期望：",bb.expected_value_delta_list)
+    print(f"剩余8回合初始积分100")
+    cur = 0
+    while cur < 9:
+        print(f"剩余{8-cur}回合累计积分变化期望：{int(bb.expected_value_accumulated_list[cur+1]*10 + 0.5)}")
+        cur += 1
+    cur = 0
+    while cur < 9:
+        print(f"剩余{8-cur}回合积分收益期望：{int(bb.expected_value_delta_list[cur+2]*10 + 0.5)}")
+        cur += 1
+    # print("累计代币变化期望：", bb.expected_value_accumulated_list)
+    # print("每回合代币收益期望：",bb.expected_value_delta_list)
 
 
 

@@ -20,6 +20,7 @@ class ExcelTools:
         # current_dir = os.getcwd()
         # 获取父目录
         self.root_dir = os.path.abspath(os.path.dirname(file_path))
+        self.data_txt_changed = set()
 
 
     def get_worksheet(self, book_name, sheet_name):
@@ -195,14 +196,6 @@ class ExcelTools:
             cur += 1
         return column_data
 
-
-
-
-class ExcelToolsForActivities(ExcelTools):
-    def __init__(self, root_path):
-        super().__init__(root_path)
-        self.data_txt_changed = set()
-
     def write_data_txt(self, name: str, blocks: str = None, json_object_list=None, instance_object_list=None):
         """
             blocks, json_object_list, instance_object_list三选一保存到{name}.data.txt中
@@ -214,7 +207,8 @@ class ExcelToolsForActivities(ExcelTools):
         Path(self.base_data_path + name + ".data.txt").write_text("\n" + blocks, encoding="utf-16")
         self.data_txt_changed.add(name + ".xlsm")
 
-    def add_object(self, key: str=None, value=None, book_name: str = None, table_data_detail=None, json_object: dict = None, instance_object=None):
+    def add_object(self, key: str = None, value=None, book_name: str = None, table_data_detail=None,
+                   json_object: dict = None, instance_object=None):
         """
             增加object到txt中
             key: 特征键 value：特征值 可不写，写了如果有重复项就不添加
@@ -241,7 +235,8 @@ class ExcelToolsForActivities(ExcelTools):
         self.write_data_txt(name=prefix, json_object_list=table_data_list)
         return True
 
-    def add_objects(self, key: str=None, value_list=None, book_name: str = None, table_data_detail=None, json_object_list: list = None, instance_object_list: list =None):
+    def add_objects(self, key: str = None, value_list=None, book_name: str = None, table_data_detail=None,
+                    json_object_list: list = None, instance_object_list: list = None):
         """
             批量增加object到txt中
             key: 特征键 value：特征值 可不写，写了如果有重复项就不添加
@@ -254,13 +249,16 @@ class ExcelToolsForActivities(ExcelTools):
         cur = 0
         while cur < len(value_list):
             if json_object_list:
-                self.add_object(key=key, value=value_list[cur], table_data_detail=table_data_detail, json_object=json_object_list[cur])
+                self.add_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
+                                json_object=json_object_list[cur])
                 cur += 1
                 continue
-            self.add_object(key=key, value=value_list[cur], table_data_detail=table_data_detail, instance_object=instance_object_list[cur])
+            self.add_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
+                            instance_object=instance_object_list[cur])
             cur += 1
 
-    def remove_object(self, key: str, value, book_name: str = None, table_data_detail=None, json_object: dict = None, instance_object=None):
+    def remove_object(self, key: str, value, book_name: str = None, table_data_detail=None, json_object: dict = None,
+                      instance_object=None):
         """
             移除所有指定键值的object
             key: 特征键
@@ -286,7 +284,8 @@ class ExcelToolsForActivities(ExcelTools):
             cur += 1
         self.write_data_txt(name=prefix, json_object_list=table_data_list)
 
-    def remove_objects(self, key: str, value_list, book_name: str = None, table_data_detail=None, json_object_list:list = None, instance_object_list: list=None):
+    def remove_objects(self, key: str, value_list, book_name: str = None, table_data_detail=None,
+                       json_object_list: list = None, instance_object_list: list = None):
         """
             移除所有指定键值的object
             key: 特征键
@@ -299,13 +298,16 @@ class ExcelToolsForActivities(ExcelTools):
         cur = 0
         while cur < len(value_list):
             if json_object_list:
-                self.remove_object(key=key, value=value_list[cur], table_data_detail=table_data_detail, json_object=json_object_list[cur])
+                self.remove_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
+                                   json_object=json_object_list[cur])
                 cur += 1
                 continue
-            self.remove_object(key=key, value=value_list[cur], table_data_detail=table_data_detail, instance_object=instance_object_list[cur])
+            self.remove_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
+                               instance_object=instance_object_list[cur])
             cur += 1
 
-    def change_object(self, key: str, value, book_name: str = None, table_data_detail=None, json_object: dict = None, instance_object=None):
+    def change_object(self, key: str, value, book_name: str = None, table_data_detail=None, json_object: dict = None,
+                      instance_object=None):
         """
             改变所有指定键值的object
             key: 特征键
@@ -332,7 +334,8 @@ class ExcelToolsForActivities(ExcelTools):
             cur += 1
         self.write_data_txt(name=prefix, json_object_list=table_data_list)
 
-    def change_objects(self, key: str, value_list, book_name: str = None, table_data_detail=None, json_object_list: list = None, instance_object_list: list=None, is_plural=False):
+    def change_objects(self, key: str, value_list, book_name: str = None, table_data_detail=None,
+                       json_object_list: list = None, instance_object_list: list = None, is_plural=False):
         """
             改变所有指定键值的object
             key: 特征键
@@ -345,14 +348,16 @@ class ExcelToolsForActivities(ExcelTools):
         cur = 0
         while cur < len(value_list):
             if json_object_list:
-                self.change_object(key=key, value=value_list[cur], table_data_detail=table_data_detail, json_object=json_object_list[cur])
+                self.change_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
+                                   json_object=json_object_list[cur])
                 cur += 1
                 continue
-            self.change_object(key=key, value=value_list[cur], table_data_detail=table_data_detail, instance_object=instance_object_list[cur])
+            self.change_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
+                               instance_object=instance_object_list[cur])
             cur += 1
 
-
-    def get_object(self,  key: str, value, book_name: str = None, table_data_detail=None, cls: type = None, is_plural=False):
+    def get_object(self, key: str, value, book_name: str = None, table_data_detail=None, cls: type = None,
+                   is_plural=False):
         """
             获取json_object和instance_object
             key: 特征键
@@ -363,7 +368,8 @@ class ExcelToolsForActivities(ExcelTools):
         """
         if not table_data_detail:
             table_data_detail = self.get_table_data_detail(book_name=book_name)
-        json_object_list = self.get_table_data_list_by_key_value(key=key, value=value, book_name=book_name, table_data_detail=table_data_detail)
+        json_object_list = self.get_table_data_list_by_key_value(key=key, value=value, book_name=book_name,
+                                                                 table_data_detail=table_data_detail)
         if not json_object_list:
             return None, None
         instance_object_list = None
@@ -388,12 +394,17 @@ class ExcelToolsForActivities(ExcelTools):
         instance_object_list = []
         cur = 0
         while cur < len(value_list):
-            json_object, instance_object = self.get_object(key=key, value=value_list[cur], table_data_detail=table_data_detail, cls=cls)
+            json_object, instance_object = self.get_object(key=key, value=value_list[cur],
+                                                           table_data_detail=table_data_detail, cls=cls)
             json_object_list.append(json_object)
             instance_object_list.append(instance_object)
             cur += 1
         return json_object_list, instance_object_list
 
+
+class ExcelToolsForActivities(ExcelTools):
+    # def __init__(self, root_path):
+    #     super().__init__(root_path)
     def group_id_to_timer_id(self, group_id):
         """
             MISSION_GROUP中根据group_id查timer_id

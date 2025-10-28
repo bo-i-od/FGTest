@@ -59,6 +59,7 @@ def item_main(excel_tool: ExcelToolsForActivities, item_package_id, notes):
     instance_object.useType = 103
     instance_object.useArgs = [item_package_id, 0]
     instance_object.autoUse = 1
+    instance_object.model = "rewardModel_treasureBox"
     print(instance_object)
     excel_tool.add_object(key=key, value=instance_object.id, table_data_detail=item_main_detail, instance_object=instance_object)
 
