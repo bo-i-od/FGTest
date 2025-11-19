@@ -116,7 +116,10 @@ class TrajectoryDiversitySampler:
 
 
 def get_bumper_sequence(folder_path, file_name):
-    with open(fr"{folder_path}\{file_name}.txt", 'r', encoding='utf-8') as f:
+    path = fr"{file_name}.txt"
+    if folder_path:
+        path = rf"{folder_path}\{path}"
+    with open(path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
         for line in lines:
             if "缓冲器碰撞序列" not in line:
@@ -186,8 +189,8 @@ def read_bytes_file(file_path):
     return data
 
 def classification():
-    folder_path = "arranged_data"  # 替换为你的文件路径
-    output_base_folder = 'c2'
+    folder_path = r"C:\Users\TU\Desktop\recorder2\Recorder2"  # 替换为你的文件路径
+    output_base_folder = 'classified_data_2'
   # 创建输出基础文件夹
     if not os.path.exists(output_base_folder):
         os.makedirs(output_base_folder)
@@ -201,7 +204,7 @@ def classification():
         data = read_bytes_file(file_path)
         file_name = os.path.basename(file_path).split(".")[0]
         bumper_sequence = get_bumper_sequence(folder_path=folder_path, file_name=file_name)
-        bumper_attack_count = bumper_sequence.count("0")
+        bumper_attack_count = bumper_sequence.count("0") + bumper_sequence.count("1") + bumper_sequence.count("2")
         born_index = data["born_index"]
         dead_index = data["dead_index"]
         folder_name = f"born{born_index}_dead{dead_index}_attack{bumper_attack_count}"
@@ -228,7 +231,7 @@ def classification():
             print(f"  {folder_name}: {file_count} 个文件")
 
 def screening_all():
-    cfg_list = [
+    cfg_list_1 = [
         {0: 18, 1: 10, 2: 5, 3: 3, 4: 1, 5: 2, 7: 1},
         {0: 20, 1: 9, 2: 5, 3: 4, 4: 1, 5: 1},
         {0: 20, 1: 10, 2: 5, 3: 3, 4: 1, 5: 1},
@@ -236,6 +239,7 @@ def screening_all():
         {0: 20, 1: 10, 2: 5, 3: 3, 4: 1, 5: 1},
         {0: 20, 1: 10, 2: 5, 3: 3, 5: 1, 6: 1},
         {0: 19, 1: 10, 2: 5, 3: 2, 4: 1, 5: 1, 7: 1, 8: 1},
+
         {0: 19, 1: 10, 2: 5, 3: 2, 4: 1, 5: 2, 6: 1},
         {0: 20, 1: 9, 2: 5, 3: 4, 4: 1, 5: 1},
         {0: 21, 1: 10, 2: 5, 3: 2, 4: 2},
@@ -243,6 +247,7 @@ def screening_all():
         {0: 21, 1: 10, 2: 5, 3: 2, 4: 2},
         {0: 20, 1: 10, 2: 5, 3: 3, 5: 1, 6: 1},
         {0: 19, 1: 10, 2: 5, 3: 3, 4: 1, 6: 1, 7: 1},
+
         {0: 18, 1: 10, 2: 5, 3: 3, 4: 2, 5: 1, 6: 1},
         {0: 20, 1: 10, 2: 5, 3: 3, 4: 1, 7: 1},
         {0: 21, 1: 10, 2: 4, 3: 3, 4: 1, 5: 1},
@@ -250,13 +255,15 @@ def screening_all():
         {0: 20, 1: 11, 2: 5, 3: 2, 4: 1, 5: 1},
         {0: 20, 1: 10, 2: 5, 3: 3, 5: 1, 6: 1},
         {0: 20, 1: 9, 2: 5, 3: 2, 4: 1, 5: 1, 6: 1, 8: 1},
-        {0: 18, 1: 10, 2: 5, 3: 3, 4: 1, 5: 2, 7: 1},
+
+        {0: 18, 1: 10, 2: 5, 3: 3, 4: 1, 5: 1, 6: 2},
         {0: 20, 1: 10, 2: 5, 3: 2, 4: 2, 6: 1},
         {0: 20, 1: 10, 2: 5, 3: 3, 4: 1, 5: 1},
         {0: 21, 1: 11, 2: 5, 3: 2, 4: 1},
         {0: 20, 1: 10, 2: 5, 3: 3, 4: 1, 5: 1},
         {0: 20, 1: 10, 2: 5, 3: 2, 4: 2, 6: 1},
         {0: 18, 1: 10, 2: 6, 3: 2, 4: 1, 5: 1, 6: 1, 7: 1},
+
         {0: 19, 1: 10, 2: 5, 3: 2, 4: 1, 5: 2, 6: 1},
         {0: 20, 1: 10, 2: 5, 3: 2, 4: 2, 6: 1},
         {0: 21, 1: 10, 2: 5, 3: 2, 4: 2},
@@ -266,22 +273,114 @@ def screening_all():
         {0: 19, 1: 10, 2: 5, 3: 3, 4: 1, 6: 1, 7: 1},
     ]
 
+    cfg_list_2 = [
+        {0: 8, 1: 11, 2: 9, 3: 5, 4: 3, 5: 2, 6: 2},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 2},
+        {0: 11, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 11, 1: 11, 2: 9, 3: 4, 4: 3, 5: 1, 6: 1},
+        {0: 11, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 2},
+        {0: 10, 1: 9, 2: 9, 3: 4, 4: 4, 5: 2, 6: 1, 7: 1},
+
+        {0: 10, 1: 10, 2: 9, 3: 3, 4: 3, 5: 2, 6: 2, 7: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 4, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 10, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 12, 1: 10, 2: 8, 3: 4, 4: 4, 5: 2},
+        {0: 10, 1: 10, 2: 10, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 6, 1: 18, 2: 5, 3: 4, 4: 4, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 8, 3: 5, 4: 3, 5: 1, 6: 1, 7: 2},
+
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 7: 2},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 4, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 9, 3: 5, 4: 4, 5: 1, 6: 1},
+        {0: 11, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 10, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 4, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 1, 8: 1},
+
+        {0: 10, 1: 9, 2: 9, 3: 4, 4: 4, 5: 2, 6: 1, 7: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 4, 5: 1, 6: 1, 7: 1},
+        {0: 11, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 11, 1: 11, 2: 9, 3: 4, 4: 3, 5: 1, 6: 1},
+        {0: 11, 1: 10, 2: 9, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 4, 5: 1, 6: 1, 7: 1},
+        {0: 9, 1: 10, 2: 9, 3: 4, 4: 4, 5: 2, 6: 2},
+
+        {0: 10, 1: 10, 2: 8, 3: 5, 4: 3, 5: 1, 6: 2, 8: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 4, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 10, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 12, 1: 10, 2: 8, 3: 4, 4: 4, 5: 2},
+        {0: 10, 1: 10, 2: 10, 3: 4, 4: 3, 5: 2, 6: 1},
+        {0: 10, 1: 10, 2: 9, 3: 4, 4: 4, 5: 2, 6: 1},
+        {0: 10, 1: 9, 2: 10, 3: 3, 4: 3, 5: 2, 6: 3},
+    ]
+
+    cfg_list_3 = [
+        {0: 7, 1: 8, 2: 10, 3: 8, 4: 3, 5: 2, 6: 2},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 2},
+        {0: 10, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 10, 1: 8, 2: 10, 3: 7, 4: 3, 5: 1, 6: 1},
+        {0: 10, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 2},
+        {0: 9, 1: 6, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1, 7: 1},
+
+        {0: 9, 1: 7, 2: 10, 3: 6, 4: 3, 5: 2, 6: 2, 7: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 11, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 11, 1: 7, 2: 9, 3: 7, 4: 4, 5: 2},
+        {0: 9, 1: 7, 2: 11, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 9, 3: 8, 4: 3, 5: 1, 6: 1, 7: 2},
+
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 7: 2},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 10, 3: 8, 4: 4, 5: 1, 6: 1},
+        {0: 10, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 11, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 1, 8: 1},
+
+        {0: 9, 1: 6, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1, 7: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 1, 6: 1, 7: 1},
+        {0: 10, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 10, 1: 8, 2: 10, 3: 7, 4: 3, 5: 1, 6: 1},
+        {0: 10, 1: 7, 2: 10, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 1, 6: 1, 7: 1},
+        {0: 8, 1: 7, 2: 10, 3: 7, 4: 4, 5: 2, 6: 2},
+
+        {0: 9, 1: 7, 2: 9, 3: 8, 4: 3, 5: 1, 6: 2, 8: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 11, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 11, 1: 7, 2: 9, 3: 7, 4: 4, 5: 2},
+        {0: 9, 1: 7, 2: 11, 3: 7, 4: 3, 5: 2, 6: 1},
+        {0: 9, 1: 7, 2: 10, 3: 7, 4: 4, 5: 2, 6: 1},
+        {0: 9, 1: 6, 2: 11, 3: 6, 4: 3, 5: 2, 6: 3},
+    ]
+
+    cfg_list = cfg_list_1
     born_index = 0
+
     while born_index < 5:
         dead_index = 0
         while dead_index < 7:
             # 找到对应的
             index = born_index * 7 + dead_index
             cfg = cfg_list[index]
+            total = 0
             for bumper_attack_count in cfg:
+                #
+                # print(born_index, dead_index, bumper_attack_count, cfg[bumper_attack_count])
+                total += cfg[bumper_attack_count]
                 screening(born_index=born_index, dead_index=dead_index, bumper_attack_count=bumper_attack_count, script_count=cfg[bumper_attack_count])
+            if total != 40:
+                raise Exception(f"-------------------{born_index, dead_index}-------------------")
             dead_index += 1
         born_index += 1
 
 
 
 def screening(born_index, dead_index, bumper_attack_count, script_count):
-    source_base_folder = 'classified_data'
+    source_base_folder = 'classified_data_1新'
     source_folder_name = f"born{born_index}_dead{dead_index}_attack{bumper_attack_count}"
     source_folder = os.path.join(source_base_folder, source_folder_name)
     # 检查源文件夹是否存在
@@ -296,9 +395,9 @@ def screening(born_index, dead_index, bumper_attack_count, script_count):
     trajectories = []
     for file in files:
         data = read_bytes_file(file_path=file)
-        if data["life_time"] < 4.5:
+        if data["life_time"] < 4:
             continue
-        if data["global_trigger_count"] < 6:
+        if data["global_trigger_count"] < 5:
             continue
         if data["track_positions"][-1]["y"] > -550:
             continue
@@ -314,7 +413,7 @@ def screening(born_index, dead_index, bumper_attack_count, script_count):
     selected_indices = sampler.select_diverse_samples(trajectories)
 
     print(f"选择了 {len(selected_indices)} 条轨迹")
-    output_folder = "arranged_data"
+    output_folder = "arranged_data_1新"
     for i in selected_indices:
         copy_file_to_target(source_file_path=file_path_list[i], target_directory=output_folder)
         copy_file_to_target(source_file_path=file_path_list[i].split(".bytes")[0] + ".txt", target_directory=output_folder)
@@ -380,13 +479,13 @@ def freeze_check(track_positions):
         return False
     return True
 
+
 def main():
     # # 把原数据根据口和碰撞缓冲器的次数分类到classified_data文件夹下
     # classification()
 
     # 筛选出最离散的若干数据
     screening_all()
-
 
 
 

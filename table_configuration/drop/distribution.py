@@ -3,7 +3,11 @@ import pulp
 # 原始数据
 # score_count = {0: 279, 1: 140, 2: 70, 3: 36, 4: 17, 5: 9, 6: 5, 7: 3, 8: 1}
 # score_count = {0:140, 1:70, 2:35, 3:18, 4:7, 5:5, 6:3, 7:1, 8:1}
-score_count = {0: 38, 1: 20, 2: 10, 3: 5, 4: 2, 5: 1, 6: 1, 7: 2, 8: 1}
+# score_count = {0: 38, 1: 20, 2: 10, 3: 5, 4: 2, 5: 1, 6: 1, 7: 2, 8: 1}
+# score_count = {0: 81, 1: 69, 2: 35, 3: 31, 4: 25, 5: 20, 6: 10, 7: 5, 8: 3, 9: 1}
+# [100, 70, 35, 29, 24, 12, 6, 3, 1]
+# [121, 63, 28, 20, 16, 11, 8, 6, 4, 2, 1]
+score_count = {0: 121, 1: 63, 2: 28, 3: 20, 4: 16, 5: 11, 6: 8, 7: 6, 8: 4, 9: 2, 10: 1}
 scores = sorted(score_count.keys())
 counts = [score_count[i] for i in scores]
 total_samples = sum(counts)  # 560
@@ -12,8 +16,8 @@ total_samples = sum(counts)  # 560
 original_ratio = {s: score_count[s] / total_samples for s in scores}
 
 # 目标平均分
-# target_avgs = [1.2, 1.0, 0.9, 0.8, 0.9, 1.0, 1.2]
-target_avgs = [1, 1]
+target_avgs = [1.75, 1.65, 1.5, 1.4, 1.5, 1.65, 1.75]
+# target_avgs = [1, 1]
 num_groups = len(target_avgs)
 group_size = 40
 

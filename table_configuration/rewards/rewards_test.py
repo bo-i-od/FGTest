@@ -239,12 +239,13 @@ def get_task_output_minigame_coin(excel_tool: ExcelToolsForActivities, value_mul
 def main():
     excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)
 
-    value_multil = 0.4
+    value_multil = 0.33
     minigame_coin_cost_per_day = 500
 
     daily_output = 360
 
-    daily_output_minigame_coin = get_task_output_minigame_coin(excel_tool=excel_tool, value_multil=value_multil) + 50 * value_multil
+    daily_output_minigame_coin = get_task_output_minigame_coin(excel_tool=excel_tool, value_multil=value_multil)
+    # daily_output_minigame_coin += 50 * value_multil
 
     # net_net_loss_list = [0,500,750,2000,6690,10000,14865,30000,34640]
     net_net_loss_list = [0,100, 200, 300, 500,750,1000,1500,2000,3000,4690,5000,7500,10000,12500,15000,20000,30000]
@@ -272,8 +273,8 @@ def main():
         res[net_net_loss]["骰子日耗"] = daily_cost
         res[net_net_loss]["进度条进度"] = progress_progress
         res[net_net_loss]["锦标赛进度"] = championship_progress
-        if res[net_net_loss]["骰子日耗"] == 20000:
-            print(f"进度条进度:{progress_progress}, 锦标赛进度:{championship_progress}")
+        # if res[net_net_loss]["骰子日耗"] == 20000:
+        #     print(f"进度条进度:{progress_progress}, 锦标赛进度:{championship_progress}")
 
         # res[net_net_loss]["minigame进度"] = minigame_progress
         # res[net_net_loss]["minigame每日返还骰子"] = minigame_dice_back
@@ -298,11 +299,14 @@ def main():
                                                       progress_progress=progress_progress,
                                                       championship_progress=championship_progress,
                                                       day_progress=2, day_championship=1)
+        # print(f"进度条进度：{progress_progress}")
+        # print(f"锦标赛进度：{championship_progress}")
+        # print(f"锦标赛进度条产出代币：{minigame_coin_count}")
 
 
         # 加上日常获取
         minigame_coin_count += daily_output_minigame_coin
-        print(minigame_coin_count)
+        # print(minigame_coin_count)
 
         # 加上minigame自身返还
         minigame_coin_count *= 1.1

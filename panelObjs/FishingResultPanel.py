@@ -20,7 +20,7 @@ class FishingResultPanel(BasePage):
             position_list = self.get_position_list(element_data_list=[ElementsData.FishingResultPanel.btn_confirm])
             if position_list[0]:
                 return ElementsData.FishingResultPanel.btn_confirm
-            self.sleep(1)
+            # self.sleep(1)
 
     def settlement(self, element_btn):
         # f_flag = True
@@ -33,7 +33,7 @@ class FishingResultPanel(BasePage):
             #     f_flag = False
 
             self.clear_popup()
-            self.sleep(1)
+            # self.sleep(1)
             if self.is_ray_input:
                 self.ray_input(kind="click", element_data=element_btn)
                 continue

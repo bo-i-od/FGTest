@@ -43,13 +43,16 @@ def hidden_treasure_level(excel_tool: ExcelToolsForActivities, level_group, grou
         mode = 2
     else:
         mode = 1
+    rewards = None
+    if rewards_list:
+        rewards = rewards_list[0]
+    level_index = 0
     loop = 1
     while loop <= len(group_id_list):
         group_id = group_id_list[loop - 1]
         minigame_hiddentreasure_level_list = excel_tool.get_table_data_list_by_key_value(key="groupId", value=group_id, table_data_detail=minigame_hiddentreasure_level_detail)
-        rewards = None
-        if rewards_list:
-            rewards = rewards_list[loop - 1]
+
+
         # if len(rewards) != len(minigame_hiddentreasure_level_list):
         #     raise DifferError(f"关卡数：{len(minigame_hiddentreasure_level_list)}，奖励数：{len(rewards)}，请确保关卡数和奖励数一致")
         cur = 0
@@ -66,12 +69,12 @@ def hidden_treasure_level(excel_tool: ExcelToolsForActivities, level_group, grou
             while len(instance_object.layouts) < 150:
                 instance_object.layouts.append(0)
             instance_object.itemReward = HIDDEN_TREASURE_REWARDS()
-            if rewards[cur] is None:
+            if rewards is None or rewards[level_index] is None:
                 pass
             elif rewards_list:
-                instance_object.itemReward.itemId = rewards[cur].tpId
-                instance_object.itemReward.type = rewards[cur].ioIdType
-                instance_object.itemReward.count = rewards[cur].count
+                instance_object.itemReward.itemId = rewards[level_index].tpId
+                instance_object.itemReward.type = rewards[level_index].ioIdType
+                instance_object.itemReward.count = rewards[level_index].count
             elif json_to_instance(json_object_list[cur], cls=HIDDEN_TREASURE_LEVEL).itemReward is None:
                 pass
             else:
@@ -89,8 +92,7 @@ def hidden_treasure_level(excel_tool: ExcelToolsForActivities, level_group, grou
                 excel_tool.change_object(key=key, value=instance_object.id,
                                          table_data_detail=hidden_treasure_level_detail, instance_object=instance_object)
             cur += 1
-            if loop > 1 and cur > 9:
-                break
+            level_index += 1
         loop += 1
 
 
@@ -100,10 +102,10 @@ def hidden_treasure_level(excel_tool: ExcelToolsForActivities, level_group, grou
 def main():
     mode = 1
     level_group = 4
-    token_id = 101301
+    token_id = 101313
     notes = f"挖沙子第{level_group}套"
-    group_id_list = [104 + level_group]
-    id_2_rewards_csv_list = {2: {"csv": ["rewards_dig_2_1.csv"]}, 3: {"csv":["rewards_dig_3_1.csv"]}, 4: {"csv":["rewards_dig_3_2.csv"]}}
+    group_id_list = [113]
+    id_2_rewards_csv_list = {2: {"csv": ["rewards_dig_2_1.csv"]}, 3: {"csv":["rewards_dig_2_2.csv"]}, 4: {"csv":["rewards_dig_2_3.csv"]}}
     rewards_csv_list = id_2_rewards_csv_list[level_group]["csv"]
     rewards_list = None
     excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)

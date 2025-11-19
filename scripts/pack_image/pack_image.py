@@ -64,6 +64,6 @@ if __name__ == "__main__":
     root_dir = r"C:/ProjectMG/trunk/client/MainProject/Assets/InBundle"            # PNG 根目录（CSV 的路径是相对它的）
     output_path = r"icons_in_text.png"  # 输出大图
     icon_size = 128               # 每个图标缩放后的尺寸
-    columns = 8                   # 每行最多放多少张
+    columns = 32                   # 每行最多放多少张
     pack_images_from_csv(csv_path, root_dir, output_path, icon_size, columns)
 

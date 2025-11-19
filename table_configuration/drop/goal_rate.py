@@ -103,7 +103,7 @@ def simulate_expectation_with_safety_net(
 
 def main():
     # # 先定下中间的两个概率求大奖
-    goal_rate = {13: 0.4, 24: 0.2}
+    goal_rate = {13: 0.3, 24: 0.3}
     expect_convert_rate = 32
     expect_collision_times = 1
     remain = expect_convert_rate - expect_collision_times * 8
@@ -116,7 +116,7 @@ def main():
     # print(convert_rate_bad)
 
     # ===== 使用示例 =====
-    probs = [0.311, 0.4, 0.2, 0.089]  # 概率
+    probs = [0.315, 0.3, 0.304, 0.081]  # 概率
     scores = [2, 13, 24, 150]  # 对应分数
     threshold = 75  # 保底阈值：累计亏分超过200触发
 
