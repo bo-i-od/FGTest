@@ -109,6 +109,7 @@ class ElementsData:
         BuildingDestroyPanel = {"locator": "UICanvas>Default>BuildingDestroyPanel"}
 
         class Choose:
+            panel_choose = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose"}
             btn_confirm = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>panel_bottom>btn_confirm>btn_normal"}
             opponent_head_mask = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>opponent_Info>head>head_mask>head_img"}
             opponent_name = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_choose>opponent_Info>name"}
@@ -120,7 +121,7 @@ class ElementsData:
             btn_close = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_bottom>btn_close>icon"}
             btn_revenge = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_list>tab>1>text"}
             btn_friend = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_list>tab>2>text"}
-            btn_go = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_list>list>Viewport>Content>1>list_item_model>panel_revenge>btn_go>btn_normal"}
+            btn_go_list = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_change>panel_list>list>Viewport>Content>>list_item_model>panel_revenge>btn_go>btn_normal"}
 
         class Reward:
             panel_reward = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward"}
@@ -129,6 +130,19 @@ class ElementsData:
                 "locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward>opponent_Info>head>head_mask>head_img"}
             opponent_name = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward>opponent_Info>name"}
             btn_confirm = {"locator": "UICanvas>Default>BuildingDestroyPanel>panel_reward>panel_bottom>btn_confirm>btn_normal"}
+
+    class HomeRightSettingPanel:
+        HomeRightSettingPanel = {"locator": "UICanvas>Default>HomeRightSettingPanel"}
+        head_mask = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel>top>head>head_mask>head_img"}
+        name = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel>top>name"}
+        fortune_hall = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel>center>button_2>text"}
+        map = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel>center>button_5>text"}
+        board_report = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel>center>button_6>text"}
+        setting = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel>center>button_8>text"}
+        btn_facebook = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel>center>btn1>btn_facebook>btn_normal"}
+        btn_close = {"locator": "UICanvas>Default>HomeRightSettingPanel>panel_bottom>btn_close>icon"}
+
+
 
 
 
