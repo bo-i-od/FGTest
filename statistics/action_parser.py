@@ -25,7 +25,7 @@ def parser_heist(action, res: dict):
     res["bankHeistActionResult"] = bank_heist_action_result
 
 
-def parser_main(log_path, json_data, line):
+def parser_main_roll(log_path, json_data, line):
     actions = json_data["actions"]
     # pprint(actions)
 
@@ -49,6 +49,34 @@ def parser_main(log_path, json_data, line):
     return line
 
 
+def parser_fish_cast(action, res: dict):
+    fish_cast_result = action["fishCastResult"]
+    res["fishCastResult"] = fish_cast_result
+
+def parser_fish_hook(action, res: dict):
+    fish_hook_result = action["fishHookResult"]
+    res["fishHookResult"] = fish_hook_result
+
+
+def parser_main_fish(log_path, json_data, line):
+    actions = json_data["actions"]
+    # pprint(actions)
+
+    for action_index in actions:
+        action = actions[action_index]
+        action_name = "fishCastAction"
+        if action_name in action:
+            save_line(log_path, line=line)
+            line = {}
+            parser_fish_cast(action[action_name], line)
+            continue
+        action_name = "fishHookAction"
+        if action_name in action:
+            parser_fish_hook(action[action_name], line)
+            continue
+    return line
+
+
 def save_line(log_path, line):
     if not line:
         return
@@ -64,7 +92,20 @@ def clear_roll_log(log_path):
     f.close()
 
 
-def main():
+def parser_fish_actions():
+    log_path = "fish_actions_log.txt"
+    clear_roll_log(log_path)
+    f = open("../statistics/cs_validate_actions_msg_log.txt", "r")
+    data_list = f.readlines()
+    f.close()
+    line = {}
+    for data in data_list:
+        d = json.loads(data)
+        line = parser_main_fish(log_path,d, line)
+    save_line(log_path, line=line)
+
+
+def parser_roll_actions():
     log_path = "roll_actions_log.txt"
     clear_roll_log(log_path)
     f = open("../statistics/cs_validate_actions_msg_log.txt", "r")
@@ -73,9 +114,9 @@ def main():
     line = {}
     for data in data_list:
         d = json.loads(data)
-        line = parser_main(log_path,d, line)
+        line = parser_main_roll(log_path,d, line)
     save_line(log_path, line=line)
 
 
 if __name__ == '__main__':
-    main()
+    parser_roll_actions()

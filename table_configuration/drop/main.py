@@ -5,37 +5,37 @@ from tools.excelRead import ExcelToolsForActivities
 def prize_drop_event(excel_tool: ExcelToolsForActivities, event_id, minigame_progress_reward_id_list, token_id):
     bumper_progress_rewards_list = [
         PRIZE_DROP_ITEM(type=1, itemId=100210, count=5),
+        PRIZE_DROP_ITEM(type=1, itemId=100100, count=5),
+        PRIZE_DROP_ITEM(type=1, itemId=token_id, count=5),
         PRIZE_DROP_ITEM(type=1, itemId=100100, count=10),
-        PRIZE_DROP_ITEM(type=1, itemId=100302, count=5),
-        PRIZE_DROP_ITEM(type=1, itemId=100100, count=10),
-        PRIZE_DROP_ITEM(type=1, itemId=100210, count=10),
+        PRIZE_DROP_ITEM(type=1, itemId=100210, count=5),
         PRIZE_DROP_ITEM(type=2, itemId=201001, count=1),
-        PRIZE_DROP_ITEM(type=1, itemId=100302, count=5),
+        PRIZE_DROP_ITEM(type=1, itemId=token_id, count=5),
+        PRIZE_DROP_ITEM(type=1, itemId=100210, count=5),
+        PRIZE_DROP_ITEM(type=1, itemId=100100, count=10),
+        PRIZE_DROP_ITEM(type=2, itemId=201001, count=1),
+        PRIZE_DROP_ITEM(type=1, itemId=100100, count=15),
         PRIZE_DROP_ITEM(type=1, itemId=100210, count=10),
         PRIZE_DROP_ITEM(type=1, itemId=100100, count=15),
-        PRIZE_DROP_ITEM(type=2, itemId=201001, count=1),
+        PRIZE_DROP_ITEM(type=1, itemId=token_id, count=5),
+        PRIZE_DROP_ITEM(type=1, itemId=100210, count=10),
         PRIZE_DROP_ITEM(type=1, itemId=100100, count=15),
         PRIZE_DROP_ITEM(type=1, itemId=100210, count=15),
+        PRIZE_DROP_ITEM(type=1, itemId=token_id, count=10),
+        PRIZE_DROP_ITEM(type=2, itemId=201002, count=1),
         PRIZE_DROP_ITEM(type=1, itemId=100100, count=20),
-        PRIZE_DROP_ITEM(type=1, itemId=100302, count=5),
         PRIZE_DROP_ITEM(type=1, itemId=100210, count=15),
         PRIZE_DROP_ITEM(type=1, itemId=100100, count=20),
+        PRIZE_DROP_ITEM(type=1, itemId=token_id, count=10),
+        PRIZE_DROP_ITEM(type=1, itemId=100210, count=15),
+        PRIZE_DROP_ITEM(type=1, itemId=token_id, count=15),
+        PRIZE_DROP_ITEM(type=1, itemId=100100, count=20),
         PRIZE_DROP_ITEM(type=1, itemId=100210, count=20),
-        PRIZE_DROP_ITEM(type=1, itemId=100302, count=10),
-        PRIZE_DROP_ITEM(type=2, itemId=201001, count=1),
         PRIZE_DROP_ITEM(type=1, itemId=100100, count=25),
+        PRIZE_DROP_ITEM(type=2, itemId=201002, count=1),
         PRIZE_DROP_ITEM(type=1, itemId=100210, count=20),
         PRIZE_DROP_ITEM(type=1, itemId=100100, count=25),
-        PRIZE_DROP_ITEM(type=1, itemId=100302, count=10),
         PRIZE_DROP_ITEM(type=1, itemId=100210, count=25),
-        PRIZE_DROP_ITEM(type=1, itemId=100302, count=15),
-        PRIZE_DROP_ITEM(type=1, itemId=100100, count=30),
-        PRIZE_DROP_ITEM(type=1, itemId=100210, count=25),
-        PRIZE_DROP_ITEM(type=1, itemId=100100, count=35),
-        PRIZE_DROP_ITEM(type=2, itemId=201001, count=1),
-        PRIZE_DROP_ITEM(type=1, itemId=100210, count=25),
-        PRIZE_DROP_ITEM(type=1, itemId=100100, count=35),
-        PRIZE_DROP_ITEM(type=1, itemId=100210, count=30),
     ]
     index = 0
     for bumper_progress_rewards in bumper_progress_rewards_list:
@@ -51,9 +51,7 @@ def prize_drop_event(excel_tool: ExcelToolsForActivities, event_id, minigame_pro
     instance_object = PRIZE_DROP_EVENT()
     instance_object.id = event_id
     instance_object.name = f"弹珠第{event_id}套配置"
-    instance_object.tokenRecycleId = 100100
     instance_object.pointId = token_id + 8000
-    instance_object.pointRecycleId = 210100
     instance_object.minigameMultipleGroupId = 1
     instance_object.prizeDropScriptPoolGroupId = 1
     instance_object.dropPortCount = 5

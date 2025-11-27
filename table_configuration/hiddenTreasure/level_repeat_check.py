@@ -27,7 +27,7 @@ def find_repeat(dicts):
 
 
 def main():
-    groupId = 106
+    groupId = 110
     excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)
     minigame_hiddentreasure_level_detail = excel_tool.get_table_data_detail(book_name="MINIGAME_HIDDENTREASURE_LEVEL.xlsm")
     minigame_hiddentreasure_target_detail = excel_tool.get_table_data_detail(book_name="MINIGAME_HIDDENTREASURE_TARGET.xlsm")

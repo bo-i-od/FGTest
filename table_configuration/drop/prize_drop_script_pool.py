@@ -6,6 +6,7 @@ from typing import Optional
 from configs.pathConfig import DEV_EXCEL_PATH
 from table_configuration.decl.PRIZE_DROP_SCRIPT_POOL import PRIZE_DROP_SCRIPT_POOL, PRIZE_DROP_SCRIPT
 from table_configuration.drop.script_screening.main import get_bumper_sequence, read_bytes_file, copy_file_to_target
+from tools.decl2py import json_list_to_instance_list
 from tools.excelRead import ExcelToolsForActivities
 import shutil
 import glob
@@ -183,17 +184,30 @@ def process_all_bytes_files(folder_path,target_path, excel_tool: ExcelToolsForAc
 
 def main():
 
-    folder_path = "script_screening/arranged_data"  # 替换为你的文件路径
+    folder_path = "script_screening/arranged_data_1新"  # 替换为你的文件路径
     target_path = r"C:\ProjectMG\trunk\client\MainProject\Assets\InBundle\UI\ActivityPrizeDrop\Glass\FrameData"
     group_id = 1
     excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)
     # 读取文件
     process_all_bytes_files(folder_path=folder_path,target_path=target_path, excel_tool=excel_tool, group_id=group_id)
 
+def test():
+    excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)
+    prize_drop_script_pool_detail = excel_tool.get_table_data_detail(book_name="PRIZE_DROP_SCRIPT_POOL.xlsm")
+    group_id = 3
+    json_object_list = excel_tool.get_table_data_list_by_key_value(key="groupId", value=group_id, table_data_detail=prize_drop_script_pool_detail)
+    instance_object_list = json_list_to_instance_list(json_object_list=json_object_list, cls=PRIZE_DROP_SCRIPT_POOL)
+    for instance_object in instance_object_list:
+        instance_object: PRIZE_DROP_SCRIPT_POOL
+        instance_object.script = []
+        instance_object.script.append(PRIZE_DROP_SCRIPT(scriptName="2-3d170a5aac46468ca699b13ae7004971", bumperSequence="0,0,0,0,0,0,0"))
+        print(instance_object)
+        excel_tool.change_object(key="id", value=instance_object.id, table_data_detail=prize_drop_script_pool_detail, instance_object=instance_object)
 
 # 使用示例
 if __name__ == "__main__":
     main()
+    # test()
 
 
     # # 打印摘要

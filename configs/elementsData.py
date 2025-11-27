@@ -19,6 +19,17 @@ class ElementsData:
         money = {"locator":"UICanvas>Default>FishingResultPanel>panel>reward>money>value"}
         fish_class = {"locator":"UICanvas>Default>FishingResultPanel>panel>fish_name>icon"}
 
+    class FlipCardPanel:
+        FlipCardPanel = {"locator":"UICanvas>Default>FlipCardPanel"}
+        btn_close = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_bottom>btn_close>icon"}
+        text_multiples = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_info>panel_desk>bg_desk>bg>bg_locked>bg_multiples>multiples_modle>text"}
+        btn_go = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_info>panel_desk>bg_desk>bg>bg_locked>bg_hole1>btn_go>num"}
+        text_cost = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_info>panel_desk>bg_desk>bg>bg_locked>bg_hole1>btn_go>num>text"}
+        text_own = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_info>panel_desk>bg_desk>bg>bg_locked>bg_hole2>bg_hole2>cost>value"}
+        text_bout = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_info>panel_body>panel_body>panel_bout>value"}
+        card_list = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_info>panel_card>bg_desk>bg>card_list>Viewport>Content>>card_model>card>FlopCard_card_model>btn"}
+        panel_card = {"locator":"UICanvas>Default>FlipCardPanel>panel>panel_info>panel_card"}
+
 
 
 
@@ -45,6 +56,10 @@ class ElementsData:
         progress_value_max = {"locator": "UICanvas>Default>HomePanel>panel>panel_progress_com>panel>progress>value>value_max"}
         reward_value = {"locator": "UICanvas>Default>HomePanel>panel>panel_progress_com>panel>progress>reward>value"}
         progress_time = {"locator": "UICanvas>Default>HomePanel>panel>panel_progress_com>panel>time>text"}
+
+    class GetCommonRewardsPanel:
+        GetCommonRewardsPanel = {"locator": "3DUI>GetCommonRewardsPanel"}
+        btn_confirm = {"locator": "3DUI>GetCommonRewardsPanel>UI>panel>down>btn_confirm", "camera": "UICamera"}
 
     class LoginPanel:
         LoginPanel = {"locator": "UICanvas>Default>LoginPanel"}
@@ -117,7 +132,12 @@ class ElementsData:
 
 
 
+    class ShowRewardsPanel:
+        ShowRewardsPanel = {"locator": "UICanvas>Default>UICanvas>Default>ShowRewardsPanel"}
 
+    class StickerRewardsShowPanel:
+        StickerRewardsShowPanel = {"locator": "UICanvas>Default>UICanvas>Default>StickerRewardsShowPanel"}
+        btn_collect = {"locator": "UICanvas>Default>StickerRewardsShowPanel>panel_bottom>btn_collect"}
 
     class StickerCollectPopEventPanel:
         StickerCollectPopEventPanel = {"locator": "UICanvas>Default>StickerCollectPopEventPanel"}

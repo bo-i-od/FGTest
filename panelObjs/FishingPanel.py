@@ -7,14 +7,23 @@ class FishingPanel(BasePage):
     def is_panel_active(self):
         return self.exist(element_data=ElementsData.FishingPanel.FishingPanel)
 
-    # def reel_quick(self):
-    #     while not FishingResultPanel.is_panel_active(self):
-    #         self.clear_popup()
-    #         # 国内
-    #         self.lua_console(command="GameRoot:GetFishingMatch():GetPlayer().fsm:NotifyEvent(FishingMatch_FSM_EVENT.AIRTEST_G)")
-    #         # # 海外
-    #         # self.lua_console(command="GameRoot:GetFishingMatch().fsm:NotifyEvent(FishingMatch_FSM_EVENT.AIRTEST_G)")
-    #         self.sleep(0.5)
+    def reel_quick(self):
+        while not FishingResultPanel.is_panel_active(self):
+            self.clear_popup()
+            cmd = """if _G.GMDoKillFish ~= nil then
+    local success, result = pcall(_G.GMDoKillFish)
+    if not success then
+        print("GMDoKillFish call failed:", result)
+    end
+else
+    print("GMDoKillFish not available")
+end
+"""
+            # 国内
+            self.lua_console(command=cmd)
+            # # 海外
+            # self.lua_console(command="GameRoot:GetFishingMatch().fsm:NotifyEvent(FishingMatch_FSM_EVENT.AIRTEST_G)")
+            self.sleep(0.5)
 
 
     def qte(self):

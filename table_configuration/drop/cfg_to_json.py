@@ -18,7 +18,7 @@ def convert_cfg_to_json():
             "4": "多边形障碍",
             "5": "墙",
         },
-        "level": cfg_6,
+        "level": cfg_8,
     }
 
     return game_configs

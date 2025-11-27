@@ -1183,6 +1183,7 @@ class BasePageMain:
         """
         position_list = self.get_position_list(object_id=object_id, element_data=element_data,
                                                offspring_path=offspring_path)
+        # print(position_list)
 
         if not position_list:
             return
@@ -1227,6 +1228,7 @@ class BasePageMain:
         # 没有弹窗
         if not pop_window_set:
             return True
+        # cur = 0
         for panel_name in pop_window_set:
             # # 开鱼卡特殊处理，进行一次点击跳过动画
             # if panel_name == "FishBagPanel":
@@ -1981,18 +1983,6 @@ end
 
         return target_log.split(title)[1].strip()
 
-    def dice(self, times: int, bet: int = 1):
-        rpcMethodRequest.dice(self.poco, times=times, bet=bet)
-
-    def set_reel_quick(self, is_reel_quick: bool):
-        self.is_reel_quick = is_reel_quick
-        if self.is_reel_quick:
-            self.custom_cmd(f"setReelQuick 1")
-            return
-        self.custom_cmd(f"setReelQuick 0")
-
-
-
     def convert_numeric_string(self, object_id: int = 0, element_data: dict = None, offspring_path=""):
         num = self.get_text(object_id=object_id,element_data=element_data,offspring_path=offspring_path)
         # 移除逗号并转换为小写
@@ -2025,6 +2015,7 @@ end
 
 if __name__ == '__main__':
     bp = BasePage(is_mobile_device=False, serial_number="127.0.0.1:21503")
+    bp.clear_popup()
     # bp.cmd("mode 400301 390001")
     # bp.is_time_scale=True
     # bp.set_time_scale(5)

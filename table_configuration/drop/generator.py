@@ -60,7 +60,7 @@ def draw_pachinko(cfg):
 
 # ---- 直接使用你的配置 ----
 def main():
-    draw_pachinko(cfg_6)
+    draw_pachinko(cfg_8)
 
 
 if __name__ == '__main__':

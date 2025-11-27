@@ -28,7 +28,7 @@ class PieceType:
 
 # 题目给定的宝物（矩形，允许旋转）
 PIECES: Tuple[PieceType, ...] = (
-    # PieceType("1x2", 1, 1),
+    PieceType("1x1", 1, 1),
     PieceType("1x2", 1, 2),
     PieceType("1x3", 1, 3),
     PieceType("1x4", 1, 4),
@@ -229,12 +229,12 @@ def format_pieces(counts: List[int]) -> str:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--min-h", type=int, default=5)
+    parser.add_argument("--min-h", type=int, default=4)
     parser.add_argument("--max-h", type=int, default=7)
-    parser.add_argument("--min-w", type=int, default=6)
+    parser.add_argument("--min-w", type=int, default=4)
     parser.add_argument("--max-w", type=int, default=7)
-    parser.add_argument("--min-fill", type=float, default=0.3)
-    parser.add_argument("--max-fill", type=float, default=0.7)
+    parser.add_argument("--min-fill", type=float, default=0.1)
+    parser.add_argument("--max-fill", type=float, default=0.4)
     parser.add_argument("--max-pieces", type=int, default=6,
                         help="可选：限制总宝物个数上限，以加速枚举")
     parser.add_argument("--out", type=str, default="results.csv")
