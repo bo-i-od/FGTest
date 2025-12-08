@@ -2008,7 +2008,7 @@ class BasePage(BasePageMain):
 
         # 转换数字部分
         try:
-            num = float(num)
+            num = int(num)
         except ValueError:
             raise ValueError(f"Invalid numeric string: '{num}'")
 
