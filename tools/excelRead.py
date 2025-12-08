@@ -1,11 +1,10 @@
 import json
 import os
-from pathlib import Path
 
 from openpyxl import *
 
 
-from common.error import PluralElementError, FindNoElementError
+from common.error import PluralElementError
 from tools import baseDataRead
 from tools.decl2py import *
 
@@ -235,28 +234,6 @@ class ExcelTools:
         self.write_data_txt(name=prefix, json_object_list=table_data_list)
         return True
 
-    def add_objects(self, key: str = None, value_list=None, book_name: str = None, table_data_detail=None,
-                    json_object_list: list = None, instance_object_list: list = None):
-        """
-            批量增加object到txt中
-            key: 特征键 value：特征值 可不写，写了如果有重复项就不添加
-            book_name，table_data_detail二选一
-            json_object，instance_object二选一
-        """
-        if not table_data_detail:
-            table_data_detail = self.get_table_data_detail(book_name=book_name)
-
-        cur = 0
-        while cur < len(value_list):
-            if json_object_list:
-                self.add_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
-                                json_object=json_object_list[cur])
-                cur += 1
-                continue
-            self.add_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
-                            instance_object=instance_object_list[cur])
-            cur += 1
-
     def remove_object(self, key: str, value, book_name: str = None, table_data_detail=None, json_object: dict = None,
                       instance_object=None):
         """
@@ -283,28 +260,6 @@ class ExcelTools:
             table_data_list.remove(json_object)
             cur += 1
         self.write_data_txt(name=prefix, json_object_list=table_data_list)
-
-    def remove_objects(self, key: str, value_list, book_name: str = None, table_data_detail=None,
-                       json_object_list: list = None, instance_object_list: list = None):
-        """
-            移除所有指定键值的object
-            key: 特征键
-            value_list：特征值列表
-            book_name，table_data_detail二选一
-            json_object，instance_object二选一
-        """
-        if not table_data_detail:
-            table_data_detail = self.get_table_data_detail(book_name=book_name)
-        cur = 0
-        while cur < len(value_list):
-            if json_object_list:
-                self.remove_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
-                                   json_object=json_object_list[cur])
-                cur += 1
-                continue
-            self.remove_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
-                               instance_object=instance_object_list[cur])
-            cur += 1
 
     def change_object(self, key: str, value, book_name: str = None, table_data_detail=None, json_object: dict = None,
                       instance_object=None):
@@ -334,28 +289,6 @@ class ExcelTools:
             cur += 1
         self.write_data_txt(name=prefix, json_object_list=table_data_list)
 
-    def change_objects(self, key: str, value_list, book_name: str = None, table_data_detail=None,
-                       json_object_list: list = None, instance_object_list: list = None, is_plural=False):
-        """
-            改变所有指定键值的object
-            key: 特征键
-            value_list：特征值列表
-            book_name，table_data_detail二选一
-            json_object，instance_object二选一
-        """
-        if not table_data_detail:
-            table_data_detail = self.get_table_data_detail(book_name=book_name)
-        cur = 0
-        while cur < len(value_list):
-            if json_object_list:
-                self.change_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
-                                   json_object=json_object_list[cur])
-                cur += 1
-                continue
-            self.change_object(key=key, value=value_list[cur], table_data_detail=table_data_detail,
-                               instance_object=instance_object_list[cur])
-            cur += 1
-
     def get_object(self, key: str, value, book_name: str = None, table_data_detail=None, cls: type = None,
                    is_plural=False):
         """
@@ -383,23 +316,6 @@ class ExcelTools:
         json_object = json_object_list[0]
         return json_object, instance_object
 
-    def get_objects(self, key, value_list, book_name: str = None, table_data_detail=None, cls: type = None):
-        """
-            获取json_object_list, instance_object_list
-            需要cls=instance_object的类型，否则instance_object_list=[]
-        """
-        if not table_data_detail:
-            table_data_detail = self.get_table_data_detail(book_name=book_name)
-        json_object_list = []
-        instance_object_list = []
-        cur = 0
-        while cur < len(value_list):
-            json_object, instance_object = self.get_object(key=key, value=value_list[cur],
-                                                           table_data_detail=table_data_detail, cls=cls)
-            json_object_list.append(json_object)
-            instance_object_list.append(instance_object)
-            cur += 1
-        return json_object_list, instance_object_list
 
 
 class ExcelToolsForActivities(ExcelTools):

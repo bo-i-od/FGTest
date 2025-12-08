@@ -412,7 +412,9 @@ class PartAssembler:
             return False
 
     def _assemble_frame_layout_v2(self, sorted_specs):
-        """框架布局V2：修复边缘部件的填充顺序为顺时针（上->右->下->左）"""
+        """
+        框架布局V2：边缘部件填充顺序修改为顺时针（左->上->右->下）
+        """
         specs_by_count = sorted(sorted_specs, key=lambda x: x['count'])
         center_spec, edge_spec, corner_spec = specs_by_count[0], specs_by_count[1], specs_by_count[2]
 
@@ -451,39 +453,39 @@ class PartAssembler:
             return part
 
         try:
-            # 1. 放置四个角 (TL, TR, BR, BL)
+            # 1. 放置四个角 (TL, TR, BR, BL) - 保持不变
             self._place(corner_parts[0], 0, 0)  # Top-Left
             self._place(corner_parts[1], 0, size - corner_size)  # Top-Right
             self._place(corner_parts[2], size - corner_size, size - corner_size)  # Bottom-Right
             self._place(corner_parts[3], size - corner_size, 0)  # Bottom-Left
 
-            # 2. 放置四个边，顺序：上 -> 右 -> 下 -> 左
+            # 2. 放置四个边，顺序修改为：左 -> 上 -> 右 -> 下
 
-            # Top Edge: 位于第一行中间，垂直填充缝隙
-            # 目标尺寸: Width=gap_size, Height=corner_size
-            # 坐标: row=0, col=corner_size
-            p_top = get_oriented(edge_parts[0], gap_size, corner_size)
-            self._place(p_top, 0, corner_size)
-
-            # Right Edge: 位于最右列中间，水平填充缝隙
-            # 目标尺寸: Width=corner_size, Height=gap_size
-            # 坐标: row=corner_size, col=corner_size + gap_size
-            p_right = get_oriented(edge_parts[1], corner_size, gap_size)
-            self._place(p_right, corner_size, corner_size + gap_size)
-
-            # Bottom Edge: 位于最后一行中间，垂直填充缝隙
-            # 目标尺寸: Width=gap_size, Height=corner_size
-            # 坐标: row=corner_size + gap_size, col=corner_size
-            p_bottom = get_oriented(edge_parts[2], gap_size, corner_size)
-            self._place(p_bottom, corner_size + gap_size, corner_size)
-
-            # Left Edge: 位于最左列中间，水平填充缝隙
+            # Left Edge (index 0): 位于最左列中间，垂直填充
             # 目标尺寸: Width=corner_size, Height=gap_size
             # 坐标: row=corner_size, col=0
-            p_left = get_oriented(edge_parts[3], corner_size, gap_size)
+            p_left = get_oriented(edge_parts[0], corner_size, gap_size)
             self._place(p_left, corner_size, 0)
 
-            # 3. 放置中心
+            # Top Edge (index 1): 位于第一行中间，水平填充
+            # 目标尺寸: Width=gap_size, Height=corner_size
+            # 坐标: row=0, col=corner_size
+            p_top = get_oriented(edge_parts[1], gap_size, corner_size)
+            self._place(p_top, 0, corner_size)
+
+            # Right Edge (index 2): 位于最右列中间，垂直填充
+            # 目标尺寸: Width=corner_size, Height=gap_size
+            # 坐标: row=corner_size, col=corner_size + gap_size
+            p_right = get_oriented(edge_parts[2], corner_size, gap_size)
+            self._place(p_right, corner_size, corner_size + gap_size)
+
+            # Bottom Edge (index 3): 位于最后一行中间，水平填充
+            # 目标尺寸: Width=gap_size, Height=corner_size
+            # 坐标: row=corner_size + gap_size, col=corner_size
+            p_bottom = get_oriented(edge_parts[3], gap_size, corner_size)
+            self._place(p_bottom, corner_size + gap_size, corner_size)
+
+            # 3. 放置中心 - 保持不变
             self._place(center_part, corner_size, corner_size)
             return True
         except Exception:
@@ -570,466 +572,4 @@ def _find_best_dimensions(area):
     return best_dims
 
 
-def test_77():
-    print("=" * 60)
-    print("测试1: 7x7 框架布局")
-    print("=" * 60)
 
-    part_3x3 = BasePart(part_content=[[0, 0, 1], [0, 1, 1], [1, 1, 1]])
-    part_3x1 = BasePart(part_content=[[0, 0, 1]])
-    part_1x1 = BasePart(part_content=[[1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x3, part_3x3.get_quadrant(2), part_3x3.get_quadrant(3), part_3x3.get_quadrant(4),
-        part_3x1, part_3x1.get_quadrant(2), part_3x1.get_quadrant(2), part_3x1,
-        part_1x1
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 0, 1, 1, 1, 0, 0],
-        [0, 1, 1, 0, 1, 1, 0],
-        [1, 1, 1, 0, 1, 1, 1],
-        [0, 0, 1, 1, 1, 0, 0],
-        [1, 1, 1, 0, 1, 1, 1],
-        [0, 1, 1, 0, 1, 1, 0],
-        [0, 0, 1, 1, 1, 0, 0]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_67():
-    print("=" * 60)
-    print("测试1: 6x7 框架布局")
-    print("=" * 60)
-
-    part_3x3 = BasePart(part_content=[[0, 0, 1], [0, 1, 1], [1, 1, 1]])
-    part_3x1 = BasePart(part_content=[[1, 0, 0]])
-    # part_1x1 = BasePart(part_content=[[1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x3, part_3x3, part_3x3, part_3x3,
-        part_3x1, part_3x1
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 0, 1, 0, 0, 1],
-        [0, 1, 1, 0, 1, 1],
-        [1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 1, 0, 0],
-        [0, 0, 1, 0, 0, 1],
-        [0, 1, 1, 0, 1, 1],
-        [1, 1, 1, 1, 1, 1]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_57():
-    print("=" * 60)
-    print("测试1: 5x7 框架布局")
-    print("=" * 60)
-
-    part_3x2 = BasePart(part_content=[[0, 0, 1], [0, 1, 1]])
-    part_3x1 = BasePart(part_content=[[1, 0, 0]])
-    part_2x1 = BasePart(part_content=[[1, 0]])
-    part_1x1 = BasePart(part_content=[[1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x2, part_3x2.get_quadrant(4), part_3x2.get_quadrant(3), part_3x2.get_quadrant(2),
-        part_3x1, part_3x1,
-        part_2x1, part_2x1.get_quadrant(2),
-        part_1x1
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 0, 1, 0, 0],
-        [0, 1, 0, 1, 0],
-        [1, 1, 0, 1, 1],
-        [1, 0, 1, 0, 1],
-        [1, 1, 1, 1, 1],
-        [0, 1, 0, 1, 0],
-        [0, 0, 0, 0, 0]
-    ]
-    for row in expected:
-        print(row)
-
-def test_47():
-    print("=" * 60)
-    print("测试1: 4x7 框架布局")
-    print("=" * 60)
-
-    part_3x2 = BasePart(part_content=[[1, 0, 1], [1, 0, 0]])
-    part_2x1 = BasePart(part_content=[[0, 1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x2, part_3x2.get_quadrant(4), part_3x2.get_quadrant(3), part_3x2.get_quadrant(2),
-        part_2x1, part_2x1.get_quadrant(2)
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [1, 1, 1, 1],
-        [0, 0, 0, 0],
-        [1, 0, 0, 1],
-        [0, 1, 1, 0],
-        [1, 0, 0, 1],
-        [0, 0, 0, 0],
-        [1, 1, 1, 1]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_37():
-    print("=" * 60)
-    print("测试1: 3x7 框架布局")
-    print("=" * 60)
-
-    part_3x3 = BasePart(part_content=[[1, 0, 1], [1, 0, 0], [1, 0, 0]])
-    part_3x1 = BasePart(part_content=[[0, 1, 1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x3, part_3x3.get_quadrant(4),
-         part_3x1.get_quadrant(2)
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [1, 0, 1],
-        [1, 0, 0],
-        [1, 0, 0],
-        [1, 1, 0],
-        [1, 0, 0],
-        [1, 0, 0],
-        [1, 0, 1]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_66():
-    print("=" * 60)
-    print("测试1: 6x6 框架布局")
-    print("=" * 60)
-
-    part_3x3 = BasePart(part_content=[[0, 0, 1], [0, 1, 1], [1, 1, 1]])
-    # part_3x1 = BasePart(part_content=[[1, 0, 1]])
-    # part_1x1 = BasePart(part_content=[[1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x3, part_3x3, part_3x3, part_3x3,
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 0, 1, 0, 0, 1],
-        [0, 1, 1, 0, 1, 1],
-        [1, 1, 1, 1, 1, 1],
-        [0, 0, 1, 0, 0, 1],
-        [0, 1, 1, 0, 1, 1],
-        [1, 1, 1, 1, 1, 1]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_56():
-    print("=" * 60)
-    print("测试1: 5x6 框架布局")
-    print("=" * 60)
-
-    part_3x2 = BasePart(part_content=[[0, 0, 1], [0, 1, 1]])
-    part_3x1 = BasePart(part_content=[[0, 0, 1]])
-    # part_1x1 = BasePart(part_content=[[1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x2, part_3x2.get_quadrant(4), part_3x2.get_quadrant(3), part_3x2.get_quadrant(2),
-        part_3x1, part_3x1,
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 0, 0, 0, 0],
-        [0, 1, 0, 1, 0],
-        [1, 1, 1, 1, 1],
-        [1, 1, 0, 1, 1],
-        [0, 1, 0, 1, 0],
-        [0, 0, 1, 0, 0]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_46():
-    print("=" * 60)
-    print("测试1: 4x6 框架布局")
-    print("=" * 60)
-
-    part_3x2 = BasePart(part_content=[[0, 0, 1], [0, 1, 1]])
-    # part_1x1 = BasePart(part_content=[[1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x2, part_3x2.get_quadrant(4), part_3x2.get_quadrant(3), part_3x2.get_quadrant(2),
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 0, 0, 0],
-        [0, 1, 1, 0],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [0, 1, 1, 0],
-        [0, 0, 0, 0]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_36():
-    print("=" * 60)
-    print("测试1: 3x6 框架布局")
-    print("=" * 60)
-
-    part_3x3 = BasePart(part_content=[[0, 0, 1], [0, 1, 1], [0, 0, 1]])
-    # part_1x1 = BasePart(part_content=[[1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x3, part_3x3.get_quadrant(2)
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 0, 1],
-        [0, 1, 1],
-        [0, 0, 1],
-        [1, 0, 0],
-        [1, 1, 0],
-        [1, 0, 0]
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_55():
-    print("=" * 60)
-    print("测试1: 5x5 框架布局")
-    print("=" * 60)
-
-    part_2x2 = BasePart(part_content=[[0, 1], [1, 0]])
-    part_2x1 = BasePart(part_content=[[0, 1]])
-    part_1x1 = BasePart(part_content=[[0]])
-
-    result1 = create_part_from_base_parts(
-        part_2x2, part_2x2.get_quadrant(4), part_2x2.get_quadrant(3), part_2x2.get_quadrant(2),
-        part_2x1, part_2x1.get_quadrant(2), part_2x1, part_2x1,
-        part_1x1,
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 1, 0, 1, 0],
-        [1, 0, 1, 0, 1],
-        [0, 1, 0, 1, 0],
-        [1, 0, 0, 0, 1],
-        [0, 1, 1, 1, 0],
-
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_45():
-    print("=" * 60)
-    print("测试1: 4x5 框架布局")
-    print("=" * 60)
-
-    part_2x2 = BasePart(part_content=[[0, 1], [1, 1]])
-    part_2x1 = BasePart(part_content=[[0, 1]])
-
-
-    result1 = create_part_from_base_parts(
-        part_2x2, part_2x2.get_quadrant(4), part_2x2.get_quadrant(3), part_2x2.get_quadrant(2),
-        part_2x1, part_2x1
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 1, 1, 1],
-        [1, 1, 0, 1],
-        [0, 1, 0, 1],
-        [1, 0, 1, 1],
-        [1, 1, 1, 0],
-
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_35():
-    print("=" * 60)
-    print("测试1: 3x5 框架布局")
-    print("=" * 60)
-
-    part_3x2 = BasePart(part_content=[[0, 1, 0], [1, 0, 0]])
-    part_3x1 = BasePart(part_content=[[0, 1, 1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x2, part_3x2.get_quadrant(4),
-        part_3x1
-
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 1, 0],
-        [1, 0, 0],
-        [0, 1, 1],
-        [1, 0, 0],
-        [0, 1, 0],
-
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_44():
-    print("=" * 60)
-    print("测试1: 4x4 框架布局")
-    print("=" * 60)
-
-    part_2x2 = BasePart(part_content=[[0, 1], [1, 1]])
-
-    result1 = create_part_from_base_parts(
-        part_2x2, part_2x2.get_quadrant(4), part_2x2.get_quadrant(3), part_2x2.get_quadrant(2),
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [0, 1, 1, 1],
-        [1, 1, 0, 1],
-        [1, 0, 1, 1],
-        [1, 1, 1, 0],
-
-    ]
-    for row in expected:
-        print(row)
-
-
-def test_34():
-    print("=" * 60)
-    print("测试1: 3x4 框架布局")
-    print("=" * 60)
-
-    part_3x2 = BasePart(part_content=[[1, 1, 0], [1, 0, 1]])
-
-    result1 = create_part_from_base_parts(
-        part_3x2.get_quadrant(4), part_3x2
-    )
-
-    print(f"【使用布局】: {result1.layout_type}")
-    print("拼接结果:")
-    result1.show()
-    print(f"尺寸: {result1.width}x{result1.height}, 方块数: {result1.block_count}")
-
-    print("\n预期结果:")
-    expected = [
-        [1, 0, 1],
-        [1, 1, 0],
-        [1, 1, 0],
-        [1, 0, 1],
-
-    ]
-    for row in expected:
-        print(row)
-
-
-def main():
-    test_77()
-    test_67()
-    test_57()
-    test_47()
-    test_37()
-    test_66()
-    test_56()
-    test_46()
-    test_36()
-    test_55()
-    test_45()
-    test_35()
-    test_44()
-    test_34()
-
-# ===================================================================
-# 测试代码（与你提供的一致）
-# ===================================================================
-if __name__ == "__main__":
-    main()

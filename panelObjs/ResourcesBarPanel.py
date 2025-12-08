@@ -15,7 +15,7 @@ class ResourceBarPanel(BasePage):
         return player_exp_value
 
     def click_btn_menu(self):
-        self.click_element_safe(element_data=ElementsData.ResourcesBarPanel.btn_menu)
+        self.click_element(element_data=ElementsData.ResourcesBarPanel.btn_menu)
 
     def get_shield_total_num(self):
         # 盾牌总数
@@ -28,3 +28,14 @@ class ResourceBarPanel(BasePage):
         shield_num_list = self.get_object_id_list(element_data=ElementsData.ResourcesBarPanel.shield)
         shield_num = len(shield_num_list)
         return shield_num
+
+    def click_player_exp(self):
+        self.click_element(element_data=ElementsData.ResourcesBarPanel.player_exp)
+
+
+if __name__ == "__main__":
+    bp = BasePage()
+
+    ResourceBarPanel.click_player_exp(bp)
+
+    bp.connect_close()

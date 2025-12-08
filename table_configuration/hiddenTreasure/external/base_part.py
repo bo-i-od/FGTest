@@ -1,3 +1,4 @@
+import json
 from itertools import combinations
 from enum import Enum
 import copy
@@ -148,61 +149,97 @@ def generate_all_mine_layouts(m, n, k):
     total = m * n
     board_list = []
 
-    # 所有选k个位置的组合
     for mine_positions in combinations(range(total), k):
         board = [[0] * n for _ in range(m)]
         for pos in mine_positions:
             i = pos // n
             j = pos % n
             board[i][j] = 1
-        print(board)
         board_list.append(board)
+
     return board_list
 
 
-def print_board(board, label=""):
-    if label:
-        print(label)
-    for row in board:
-        print(' '.join('X' if cell == 1 else '.' for cell in row))
-    print()
+def save_all_layouts(m, n, max_mines):
+    """生成并保存所有布局到一个JSON文件"""
+    filename = f"layouts/layouts_{m}_{n}.json"
+    all_boards = []
+    for k in range(0, max_mines + 1):
+        layouts = generate_all_mine_layouts(m, n, k)
+        all_boards.extend(layouts)
+        print(f"✓ 生成雷数={k}的布局: {len(layouts)}种")
 
+    # 保存到JSON
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(all_boards, f, indent=2)
+
+    print(f"\n✅ 总共 {len(all_boards)} 种布局已保存到: {filename}")
+    return all_boards
+
+
+def load_all_layouts(filename):
+    """从JSON文件读取所有布局"""
+    with open(filename, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def get_random_layout(layouts):
+    """随机获取一个布局"""
+    import random
+    return random.choice(layouts)
+
+
+# 生成1*1 至 3*3的base_part
 def main():
     m = 3
     n = 3
-    total = m * n
-    max_count = 4
-    print(f"生成 {m}x{n} 扫雷盘，雷数从 1 到 {max_count} 的所有可能布局：\n")
-    # res =
-    for k in range(1, max_count + 1):
-        layouts = generate_all_mine_layouts(m, n, k)
-        print(f"--- 雷数: {k}，共 {len(layouts)} 种布局 ---")
-        # for idx, board in enumerate(layouts, 1):
-        #     print_board(board, f"布局 {idx}:")
+    max_mines = (m * n) // 2
+    # max_mines=3
+
+    # ========== 保存 ==========
+    print(f"📦 生成 {m}x{n} 扫雷盘所有布局\n")
+    save_all_layouts(m, n, max_mines)
+
+    # ========== 读取和使用 ==========
+    print("\n" + "=" * 50)
+    print("📖 读取示例：\n")
+
+    filename = f"layouts/layouts_{m}_{n}.json"
+    layouts = load_all_layouts(filename=filename)
+    print(f"总共加载了 {len(layouts)} 种布局\n")
+
+    # 随机获取
+    board = get_random_layout(layouts)
+    print("随机获取的布局:")
+    for row in board:
+        print(row)
+
+    # 按索引获取
+    print("\n第0个布局:")
+    for row in layouts[0]:
+        print(row)
 
 
-
-# 主程序
 if __name__ == "__main__":
-    # main()
-    part_content = [[1, 0, 0], [0, 1, 0], [1, 0, 0]]
-    bp1 = BasePart(part_content=part_content)
-    print(bp1.part_content)
-    bp2 = BasePart(part_content=part_content)
-    print(bp2.part_content)
-    bp3 = BasePart(part_content=part_content)
-    print(bp3.part_content)
-    bp4 = BasePart(part_content=part_content)
-    print(bp4.part_content)
-
-    bp1_bp2 = merge_part(part_list=[bp1,bp2],joint_direction=JointDirection.COLUMN)
-    print(bp1_bp2.part_content)
-    bp3_bp4 = merge_part(part_list=[bp3, bp4], joint_direction=JointDirection.COLUMN)
-    print(bp3_bp4.part_content)
-    a = merge_part(part_list=[bp1_bp2, bp3_bp4], joint_direction=JointDirection.ROW)
-    print(a.part_content)
-    a.show()
-    print(a.part_content)
+    main()
+    # part_content = [[1, 0, 0], [0, 1, 0], [1, 0, 0]]
+    # bp1 = BasePart(part_content=part_content)
+    # print(bp1.part_content)
+    # bp2 = BasePart(part_content=part_content)
+    # print(bp2.part_content)
+    # bp3 = BasePart(part_content=part_content)
+    # print(bp3.part_content)
+    # bp4 = BasePart(part_content=part_content)
+    # print(bp4.part_content)
+    #
+    # bp1_bp2 = merge_part(part_list=[bp1,bp2],joint_direction=JointDirection.COLUMN)
+    # print(bp1_bp2.part_content)
+    # bp3_bp4 = merge_part(part_list=[bp3, bp4], joint_direction=JointDirection.COLUMN)
+    # print(bp3_bp4.part_content)
+    # a = merge_part(part_list=[bp1_bp2, bp3_bp4], joint_direction=JointDirection.ROW)
+    # print(a.part_content)
+    # a.show()
+    # print(a.part_content)
     #
     # print(b.part_content)
     # print(merge_part(part_list=[a,b],joint_direction=JointDirection.COLUMN).part_content)

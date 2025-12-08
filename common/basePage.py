@@ -62,15 +62,16 @@ class BasePageMain:
             self.is_ios = True
 
         # 默认端口 5001
-        addr = ('127.0.0.1', 5001)
+        addr = ('', 5001)
         # Unity log接收端口5002
-        addr_listen = ('127.0.0.1', 5002)
+        addr_listen = ('', 5002)
         self.dev = dev
         if self.dev is None:
             print("self.dev is None")
             self.serial_number = serial_number
             self.dev = self.get_device(serial_number=serial_number)
-        self.poco = UnityPoco(addr, device=self.dev)
+
+        self.poco = UnityPoco(addr, device=dev)
         self.custom_cmd("setCamera UICamera_Front")
         self.poco_listen = None
 
@@ -171,6 +172,7 @@ class BasePageMain:
             关闭与c#的rpc连接
             当开启Unity log接收端口也同时关闭
         """
+        self.sleep(0.1)
         self.send_log_flag = False
         self.poco.agent.c.conn.close()
         if self.poco_listen is not None:
@@ -1891,8 +1893,11 @@ class BasePage(BasePageMain):
             command:str
         """
         if not command:
-            return
-        self.lua_console_list([command])
+            return None
+        result_list = self.lua_console_list([command])
+        if not result_list:
+            return None
+        return result_list[0]
 
     def lua_console_list(self, command_list):
         """函数功能简述
@@ -1902,91 +1907,91 @@ class BasePage(BasePageMain):
             command_list:list[str]
         """
         if not command_list:
-            return
-        rpcMethodRequest.lua_console(self.poco, command_list)
+            return []
+        return rpcMethodRequest.lua_console(self.poco, command_list)
 
     # lua_code_main是lua代码主体
     # lua_code_res是需要接收的部分
     def lua_console_with_response(self, lua_code_main="", lua_code_return=""):
-        """函数功能简述
-            有返回值的lua代码片段
+        return rpcMethodRequest.lua_console_with_response(self.poco,lua_code_main=lua_code_main,lua_code_return=lua_code_return)
+#         """函数功能简述
+#             有返回值的lua代码片段
+#
+#         参数:
+#             lua_code_main: lua代码片段的逻辑主体部分（简单情况下为空）
+#             lua_code_return: 需要返回值的部分
+#         返回值:
+#             str
+#         """
+#         # 清空消息列表 开始收消息
+#         self.log_list.clear()
+#         self.log_list_flag = True
+#         title = f'<==== [C#] Receive LuaSnippets Response "{lua_code_return}" ====>'
+#
+#         lua_code = lua_code_main
+#
+#         if lua_code:
+#             lua_code += "\n"
+#         if lua_code_return:
+#             lua_code += """
+# function table_to_string(tbl, already_printed)
+#     if type(tbl) ~= "table" then
+#         if type(tbl) == "string" then
+#             return '"'..tbl..'"'
+#         end
+#         return tostring(tbl)
+#     end
+#
+#     already_printed = already_printed or {}
+#     if already_printed[tbl] then
+#         return "<循环引用>"
+#     end
+#     already_printed[tbl] = true
+#
+#     local result = "{"
+#     local first = true
+#
+#     -- 先处理数组部分
+#     local max_index = 0
+#     for i, v in ipairs(tbl) do
+#         if not first then result = result.."," end
+#         first = false
+#         result = result..table_to_string(v, already_printed)
+#         max_index = i
+#     end
+#
+#     -- 再处理其他键值对
+#     for k, v in pairs(tbl) do
+#         if type(k) ~= "number" or k > max_index or k < 1 then
+#             if not first then result = result.."," end
+#             first = false
+#             local key
+#             if type(k) == "string" and k:match("^[%a_][%w_]*$") then
+#                 key = k
+#             else
+#                 key = "["..table_to_string(k, already_printed).."]"
+#             end
+#             result = result..key.."="..table_to_string(v, already_printed)
+#         end
+#     end
+#
+#     return result.."}"
+# end
+# """
+#             lua_code += rf"print('{title}',table_to_string({lua_code_return}))"
+#         # 发送消息
+#         self.lua_console(lua_code)
+#
+#         target_log = self.receive_until_get_msg(msg_key=title)
+#
+#         if not target_log:
+#             return None
+#
+#         return target_log.split(title)[1].strip()
 
-        参数:
-            lua_code_main: lua代码片段的逻辑主体部分（简单情况下为空）
-            lua_code_return: 需要返回值的部分
-        返回值:
-            str
-        """
-        # 清空消息列表 开始收消息
-        self.log_list.clear()
-        self.log_list_flag = True
-        title = f'<==== [C#] Receive LuaSnippets Response "{lua_code_return}" ====>'
-
-        lua_code = lua_code_main
-
-        if lua_code:
-            lua_code += "\n"
-        if lua_code_return:
-            lua_code += """
-function table_to_string(tbl, already_printed)
-    if type(tbl) ~= "table" then
-        if type(tbl) == "string" then
-            return '"'..tbl..'"'
-        end
-        return tostring(tbl)
-    end
-
-    already_printed = already_printed or {}
-    if already_printed[tbl] then
-        return "<循环引用>"
-    end
-    already_printed[tbl] = true
-
-    local result = "{"
-    local first = true
-
-    -- 先处理数组部分
-    local max_index = 0
-    for i, v in ipairs(tbl) do
-        if not first then result = result.."," end
-        first = false
-        result = result..table_to_string(v, already_printed)
-        max_index = i
-    end
-
-    -- 再处理其他键值对
-    for k, v in pairs(tbl) do
-        if type(k) ~= "number" or k > max_index or k < 1 then
-            if not first then result = result.."," end
-            first = false
-            local key
-            if type(k) == "string" and k:match("^[%a_][%w_]*$") then
-                key = k
-            else
-                key = "["..table_to_string(k, already_printed).."]"
-            end
-            result = result..key.."="..table_to_string(v, already_printed)
-        end
-    end
-
-    return result.."}"
-end
-"""
-            lua_code += rf"print('{title}',table_to_string({lua_code_return}))"
-        # 发送消息
-        self.lua_console(lua_code)
-
-        target_log = self.receive_until_get_msg(msg_key=title)
-
-        if not target_log:
-            return None
-
-        return target_log.split(title)[1].strip()
-
-    def convert_numeric_string(self, object_id: int = 0, element_data: dict = None, offspring_path=""):
-        num = self.get_text(object_id=object_id,element_data=element_data,offspring_path=offspring_path)
+    def convert_numeric_string(self, num_str):
         # 移除逗号并转换为小写
-        num = num.replace(',','').strip().lower()
+        num = num_str.replace(',','').strip().lower()
         multiplier = 1
         if num.endswith('k'):
             multiplier = 1000
@@ -2010,6 +2015,40 @@ end
         # 应用乘数
         result = num * multiplier
         return result
+
+
+    def get_fish_id_list(self, fishery_id):
+        fishery_id = int(fishery_id)
+        fisheries_detail = self.excelTools.get_table_data_detail(book_name="FISHERIES.xlsm")
+        json_object = self.excelTools.get_table_data_by_key_value(key="id", value=fishery_id, table_data_detail=fisheries_detail)
+        return json_object["fish"]
+
+
+    def fish_id_to_fishery_id(self, fish_id):
+        fish_id = int(fish_id)
+        fisheries_detail = self.excelTools.get_table_data_detail(book_name="FISHERIES.xlsm")
+        table_data_object_list = fisheries_detail[0]
+        for table_data_object in table_data_object_list:
+            if "enabled" not in table_data_object:
+                continue
+            fish_list = table_data_object["fish"]
+            if fish_id not in fish_list:
+                continue
+            return table_data_object["id"]
+        raise Exception(f"没有找到{fish_id}所属的渔场")
+
+    def get_chess_position(self):
+        lua_code_main = """function getCurPosition()
+    local db = DataMgr:GetDBWithName("BoardDB")
+    if not db then
+        return nil
+    end
+    return db:GetCurPositionIndex()
+end      
+"""
+        chess_position = self.lua_console_with_response(lua_code_main=lua_code_main,lua_code_return="getCurPosition()")
+        return int(chess_position)
+
 
 
 

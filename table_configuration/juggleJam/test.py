@@ -64,8 +64,8 @@ def main():
     puzzle_pool_group_id = 2
     juggle_jam_puzzle_pool_detail = excel_tool.get_table_data_detail(book_name="JUGGLE_JAM_PUZZLE_POOL.xlsm")
     serve_test(excel_tool=excel_tool, juggle_jam_puzzle_pool_detail=juggle_jam_puzzle_pool_detail, puzzle_pool_group_id=puzzle_pool_group_id)
-    # convert_rate = get_convert_rate(excel_tool=excel_tool,juggle_jam_puzzle_pool_detail=juggle_jam_puzzle_pool_detail, puzzle_pool_group_id=puzzle_pool_group_id)
-    # print(convert_rate)
+    convert_rate = get_convert_rate(excel_tool=excel_tool,juggle_jam_puzzle_pool_detail=juggle_jam_puzzle_pool_detail, puzzle_pool_group_id=puzzle_pool_group_id)
+    print(convert_rate)
 
 
 # 示例使用

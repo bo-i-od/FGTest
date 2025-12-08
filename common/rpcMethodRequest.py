@@ -149,6 +149,10 @@ def cmd(poco, command_list):
 @sync_wrapper
 def lua_console(poco, command_list):
     return poco.agent.c.call("LuaConsole", command_list)
+@sync_wrapper
+def lua_console_with_response(poco, lua_code_main, lua_code_return):
+    return poco.agent.c.call("LuaConsoleWithResponse", lua_code_main, lua_code_return)
+
 
 @sync_wrapper
 def custom_cmd(poco, command_list):

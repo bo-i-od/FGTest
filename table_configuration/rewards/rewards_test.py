@@ -7,13 +7,13 @@ from tools.excelRead import ExcelToolsForActivities
 
 back_data_list = [
     {"cost": 3000, "dice_chess": 0.18, "dice_process": 0.2, "dice_championship_p": 0.1,"dice_championship_r": 0.03, "dice_minigame": 0.1,
-     "dice_card": 0.03, "dice_build": 0.02, "dice_buff": 0.1, "money_chess": 1, "money_process": 0.2, "money_championship_p": 0.2,"money_championship_r": 0.03,
+     "dice_card": 0.025, "dice_build": 0.05, "dice_buff": 0.1, "money_chess": 1, "money_process": 0.2, "money_championship_p": 0.2,"money_championship_r": 0.03,
      "money_minigame": 0.08, "money_card": 0.03, "money_build": 0.05, "money_buff_1": 0.025, "money_buff_2": 0.025},
     {"cost": 10000, "dice_chess": 0.18, "dice_process": 0.2, "dice_championship_p": 0.09, "dice_championship_r": 0.03, "dice_minigame": 0.1,
-     "dice_card": 0.04, "dice_build": 0.02,"dice_buff": 0.1, "money_chess": 1, "money_process": 0.15, "money_championship_p": 0.15,"money_championship_r": 0.03,
+     "dice_card": 0.03, "dice_build": 0.05,"dice_buff": 0.1, "money_chess": 1, "money_process": 0.15, "money_championship_p": 0.15,"money_championship_r": 0.03,
      "money_minigame": 0.08, "money_card": 0.04, "money_build": 0.05, "money_buff_1": 0.025, "money_buff_2": 0.025},
-    {"cost": 50000, "dice_chess": 0.18, "dice_process": 0.16, "dice_championship_p": 0.08,"dice_championship_r": 0.02, "dice_minigame": 0.1,
-    "dice_card": 0.05, "dice_build": 0.02, "dice_buff": 0.1, "money_chess": 1, "money_process": 0.1, "money_championship_p": 0.1,"money_championship_r": 0.02,
+    {"cost": 50000, "dice_chess": 0.18, "dice_process": 0.16, "dice_championship_p": 0.08,"dice_championship_r": 0.02, "dice_minigame": 0.05,
+    "dice_card": 0.035, "dice_build": 0.05, "dice_buff": 0.1, "money_chess": 1, "money_process": 0.1, "money_championship_p": 0.1,"money_championship_r": 0.02,
      "money_minigame": 0.08, "money_card": 0.05, "money_build": 0.05, "money_buff_1": 0.025, "money_buff_2": 0.025},
 ]
 
@@ -239,8 +239,8 @@ def get_task_output_minigame_coin(excel_tool: ExcelToolsForActivities, value_mul
 def main():
     excel_tool = ExcelToolsForActivities(root_path=DEV_EXCEL_PATH)
 
-    value_multil = 0.33
-    minigame_coin_cost_per_day = 500
+    value_multil = 0.1
+    minigame_coin_cost_per_day = 150
 
     daily_output = 360
 
@@ -248,7 +248,7 @@ def main():
     # daily_output_minigame_coin += 50 * value_multil
 
     # net_net_loss_list = [0,500,750,2000,6690,10000,14865,30000,34640]
-    net_net_loss_list = [0,100, 200, 300, 500,750,1000,1500,2000,3000,4690,5000,7500,10000,12500,15000,20000,30000]
+    net_net_loss_list = [0,100, 200, 300, 500,750,1000,1500,2000,2500,3000,4000,5000,7500,10000,12500,15000,20000,30000]
 
 
     print(f"骰子每日充值获取：{net_net_loss_list}")
@@ -257,30 +257,35 @@ def main():
     daily_cost_championship_complete = 50000
     # daily_cost_minigame_complete = 20000
 
-    for net_net_loss in net_net_loss_list:
-        res[net_net_loss] = {}
-        daily_cost = find_daily_cost_by_net_net_loss(target_net_net_loss=net_net_loss, daily_output=daily_output)
-        daily_cost = int(daily_cost)
+    # for net_net_loss in net_net_loss_list:
+    #     res[net_net_loss] = {}
+    #     daily_cost = find_daily_cost_by_net_net_loss(target_net_net_loss=net_net_loss, daily_output=daily_output)
+    #     daily_cost = int(daily_cost)
+    #
+    #     progress_progress = min(daily_cost/daily_cost_progress_complete, 1)
+    #     championship_progress = min(daily_cost/daily_cost_championship_complete, 1)
+    #     # minigame_progress = min(daily_cost/daily_cost_minigame_complete, 1)
+    #     # minigame_dice_back = get_back_dice(daily_cost=daily_cost, system_key="dice_minigame")
+    #     # minigame_dice_back = int(minigame_dice_back)
+    #     # minigame_dice_back_rate = minigame_dice_back / daily_cost
+    #
+    #     res[net_net_loss]["日常产出"] = daily_output
+    #     res[net_net_loss]["骰子日耗"] = daily_cost
+    #     res[net_net_loss]["进度条进度"] = progress_progress
+    #     res[net_net_loss]["锦标赛进度"] = championship_progress
 
+    daily_cost_list = [50, 100,150,250,500,1000,1500,2500,5000,10000,15000,25000]
+    for daily_cost in daily_cost_list:
+        res[daily_cost] = {}
         progress_progress = min(daily_cost/daily_cost_progress_complete, 1)
         championship_progress = min(daily_cost/daily_cost_championship_complete, 1)
-        # minigame_progress = min(daily_cost/daily_cost_minigame_complete, 1)
-        # minigame_dice_back = get_back_dice(daily_cost=daily_cost, system_key="dice_minigame")
-        # minigame_dice_back = int(minigame_dice_back)
-        # minigame_dice_back_rate = minigame_dice_back / daily_cost
+        res[daily_cost]["日常产出"] = daily_output
+        res[daily_cost]["骰子日耗"] = daily_cost
+        res[daily_cost]["进度条进度"] = progress_progress
+        res[daily_cost]["锦标赛进度"] = championship_progress
 
-        res[net_net_loss]["日常产出"] = daily_output
-        res[net_net_loss]["骰子日耗"] = daily_cost
-        res[net_net_loss]["进度条进度"] = progress_progress
-        res[net_net_loss]["锦标赛进度"] = championship_progress
-        # if res[net_net_loss]["骰子日耗"] == 20000:
-        #     print(f"进度条进度:{progress_progress}, 锦标赛进度:{championship_progress}")
 
-        # res[net_net_loss]["minigame进度"] = minigame_progress
-        # res[net_net_loss]["minigame每日返还骰子"] = minigame_dice_back
-        # res[net_net_loss]["minigame两日返还骰子"] = minigame_dice_back * 2
-        # res[net_net_loss]["minigame三日返还骰子"] = minigame_dice_back * 3
-        # res[net_net_loss]["minigame返还骰子比例"] = minigame_dice_back_rate
+
 
     # print(res)
 

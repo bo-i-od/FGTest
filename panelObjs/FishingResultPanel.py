@@ -8,6 +8,9 @@ class FishingResultPanel(BasePage):
     def click_btn_confirm(self):
         self.click_element(element_data=ElementsData.FishingResultPanel.btn_confirm)
 
+    def click_btn_confirm_safe(self):
+        self.click_element_safe(element_data=ElementsData.FishingResultPanel.btn_confirm)
+
     def wait_for_result(self):
         while True:
             self.clear_popup()

@@ -9,8 +9,12 @@ def roll(bp, times, rate=1):
     bp.lua_console(f"AutoPerformController:Perform({times}, {rate})")
 
 
-def fish(bp, fishery,times):
-    bp.lua_console(f"FishingController:Simulation({fishery}, {times})")
+def fish(bp, fishery,times, use_limited_fish_spot):
+    use_limited_fish_spot_str = "false"
+    if use_limited_fish_spot:
+        use_limited_fish_spot_str = "true"
+    cmd = f"FishingController:Simulation({fishery}, {times}, {use_limited_fish_spot_str})"
+    bp.lua_console(cmd)
 
 
 def with_base_page(is_mobile_device=False, serial_number=None):
@@ -46,20 +50,20 @@ def clear_log():
 def main(bp: BasePage):
     # 清空记录validate_actions_msg_log
     clear_log()
-    times = 300
-    # 骰子模拟
-    roll(bp, times=times, rate=1)
-    # 保持连接次数越多sleep越久
-    bp.sleep(10)
-    # CSValidateActionsMsg解析其中的roll heist atk_building相关内容
-    action_parser.parser_roll_actions()
-
-    # # 钓鱼模拟
-    # fish(bp, fishery=400301, times=times)
+    times = 1
+    # # # # 骰子模拟
+    # roll(bp, times=times, rate=10)
     # # 保持连接次数越多sleep越久
     # bp.sleep(10)
-    # # CSValidateActionsMsg解析其中的cast hook相关内容
-    # action_parser.parser_fish_actions()
+    # # CSValidateActionsMsg解析其中的roll heist atk_building相关内容
+    # action_parser.parser_roll_actions()
+
+    # 钓鱼模拟
+    fish(bp, fishery=400301, times=times, use_limited_fish_spot=False)
+    # 保持连接次数越多sleep越久
+    bp.sleep(3)
+    # CSValidateActionsMsg解析其中的cast hook相关内容
+    action_parser.parser_fish_actions()
 
 
 

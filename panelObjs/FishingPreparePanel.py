@@ -16,7 +16,7 @@ class FishingPreparePanel(BasePage):
                 cur += 1
                 continue
             element_data = element_data_list[cur]
-            print(self.is_ray_input)
+            # print(self.is_ray_input)
             if self.is_ray_input:
                 self.ray_input(kind="click", element_data=element_data)
 
@@ -27,3 +27,6 @@ class FishingPreparePanel(BasePage):
                 return
             cur += 1
         FishingPreparePanel.click_btn_cast(self)
+
+    def click_btn_cast_safe(self):
+        self.click_element_safe(element_data=ElementsData.FishingPreparePanel.btn_cast)

@@ -81,6 +81,9 @@ def cmd(poco:Poco, command: list)-> any:
 def lua_console(poco:Poco, command: list)-> any:
     ...
 
+def lua_console_with_response(poco:Poco, lua_code_main: str, lua_code_return: str)-> any:
+    ...
+
 def custom_cmd(poco:Poco, command_list:list):
     ...
 
